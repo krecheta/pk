@@ -1,4 +1,4 @@
-package kryptografia_zadanie1_mvc;
+package Model;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

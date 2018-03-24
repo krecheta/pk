@@ -3,7 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kryptografia_zadanie1_mvc;
+package Main;
+
+import Controller.Controller;
+import View.View;
+import Model.Model;
 
 
 /**

@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package kryptografia_zadanie1_mvc;
+package Controller;
 
+import View.SelectFileView;
+import View.View;
+import Model.Model;
 import java.awt.event.ActionListener;
 
 import java.awt.event.ActionEvent;
