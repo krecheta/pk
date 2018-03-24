@@ -14,7 +14,7 @@ import Model.Model;
  *
  * @author edodomi
  */
-public class Kryptografia_zadanie1_MVC {
+public class Main {
 
     /**
      * @param args the command line arguments

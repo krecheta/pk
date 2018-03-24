@@ -32,15 +32,18 @@ public class SelectFileView extends javax.swing.JFrame {
         ok = new javax.swing.JButton();
         cancel = new javax.swing.JButton();
         chooseFile_1 = new javax.swing.JButton();
-        choseFile_2 = new javax.swing.JButton();
-        readFileText = new javax.swing.JTextField();
-        saveFileText = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         keyRadio = new javax.swing.JRadioButton();
-        keyPath = new javax.swing.JTextField();
         keyButton = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        readFileText = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        saveFileText = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        keyPath = new javax.swing.JTextArea();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        choseFile_2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,18 +53,6 @@ public class SelectFileView extends javax.swing.JFrame {
 
         chooseFile_1.setText("Choose File");
 
-        choseFile_2.setText("Choose File");
-
-        readFileText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                readFileTextActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("Read File");
-
-        jLabel2.setText("Save File");
-
         keyRadio.setText("Generate key dynamically");
         keyRadio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -69,15 +60,27 @@ public class SelectFileView extends javax.swing.JFrame {
             }
         });
 
-        keyPath.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                keyPathActionPerformed(evt);
-            }
-        });
-
         keyButton.setText("Choose File");
 
-        jLabel3.setText("Key File");
+        readFileText.setColumns(20);
+        readFileText.setRows(5);
+        jScrollPane1.setViewportView(readFileText);
+
+        saveFileText.setColumns(20);
+        saveFileText.setRows(5);
+        jScrollPane2.setViewportView(saveFileText);
+
+        keyPath.setColumns(20);
+        keyPath.setRows(5);
+        jScrollPane3.setViewportView(keyPath);
+
+        jLabel4.setText("Read file");
+
+        jLabel5.setText("Save file");
+
+        jLabel6.setText("File with Key");
+
+        choseFile_2.setText("Choose File");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -86,81 +89,83 @@ public class SelectFileView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(readFileText)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chooseFile_1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(saveFileText)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(choseFile_2))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(keyPath)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(keyButton))
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(choseFile_2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(chooseFile_1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(keyRadio, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 487, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(keyRadio, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 255, Short.MAX_VALUE)
-                        .addComponent(cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ok)))
-                .addContainerGap())
+                            .addComponent(keyButton)
+                            .addComponent(ok))))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancel, choseFile_2, keyButton, ok});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancel, keyButton, ok});
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2, jScrollPane3});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(readFileText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chooseFile_1))
+                .addComponent(jLabel4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(chooseFile_1)))
                 .addGap(33, 33, 33)
-                .addComponent(jLabel2)
+                .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(choseFile_2)
+                        .addGap(9, 9, 9)))
+                .addGap(35, 35, 35)
+                .addComponent(jLabel6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(keyButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(choseFile_2)
-                    .addComponent(saveFileText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(keyPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(keyButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ok)
                     .addComponent(cancel)
+                    .addComponent(ok)
                     .addComponent(keyRadio))
-                .addGap(28, 28, 28))
+                .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {chooseFile_1, choseFile_2, keyButton, keyPath, readFileText, saveFileText});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {chooseFile_1, keyButton});
 
-        setSize(new java.awt.Dimension(628, 348));
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane2, jScrollPane3});
+
+        setSize(new java.awt.Dimension(661, 375));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void keyPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyPathActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_keyPathActionPerformed
 
     private void keyRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyRadioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_keyRadioActionPerformed
-
-    private void readFileTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readFileTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_readFileTextActionPerformed
 
     public void addKeyRadio(ActionListener listener){
         keyRadio.addActionListener(listener);
@@ -229,14 +234,17 @@ public class SelectFileView extends javax.swing.JFrame {
     private javax.swing.JButton cancel;
     private javax.swing.JButton chooseFile_1;
     private javax.swing.JButton choseFile_2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton keyButton;
-    private javax.swing.JTextField keyPath;
+    private javax.swing.JTextArea keyPath;
     private javax.swing.JRadioButton keyRadio;
     private javax.swing.JButton ok;
-    private javax.swing.JTextField readFileText;
-    private javax.swing.JTextField saveFileText;
+    private javax.swing.JTextArea readFileText;
+    private javax.swing.JTextArea saveFileText;
     // End of variables declaration//GEN-END:variables
 }
