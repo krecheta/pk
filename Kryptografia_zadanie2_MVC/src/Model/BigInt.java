@@ -107,7 +107,7 @@ public class BigInt {
 			sub = val1[i] - carry;
 			
 			if(i > 0 || sub > 0) {
-				s.append(val1[i]);
+				s.append(sub);
 			}
 		}
 		
@@ -168,22 +168,15 @@ public class BigInt {
             System.out.println("Model.BigInt.div() dzielenie " + this.toString() +" przez " + other.toString());
 		String val1 = this.toString();
 		String val2 = other.toString();
-                int a1,a2;
-		if(val1.length()<val2.length() && modulo )
-                    return this;
-                if ( val1.length() == val2.length()){
-                 for(int i=0 ;i<val1.length(); i++){
-                   a1 = Integer.parseInt(val1.substring(i,i+1));
-                   a2 = Integer.parseInt(val2.substring(i,i+1));
-                   
-                  if (a1 < a2)
-                      return this;
-                  else if (a1 == a2 )
-                          continue;
-                  else
-                    break;
-                 }
-                }
+		
+		if(!isSmallerOrEqual(val1, val2)) {
+			if(modulo) {
+				return this;
+			} else {
+				return new BigInt("0");
+			}
+		}
+		
 		StringBuilder quotient = new StringBuilder();
         String remainder = "";
         int result = 0, index = 0;
@@ -345,7 +338,7 @@ public class BigInt {
 			sub = Character.getNumericValue(val1.charAt(i)) - carry;
 			
 			if(i > 0 || sub > 0) {
-				s.append(Character.getNumericValue(val1.charAt(i)));
+				s.append(sub);
 			}
 		}
 		return cutZeros(s.reverse().toString());
