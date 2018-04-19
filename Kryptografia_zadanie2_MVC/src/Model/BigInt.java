@@ -116,7 +116,6 @@ public class BigInt {
 	
 	//mno�enie
 	public BigInt mul(BigInt other) {
-                     System.out.println("Mnozenie " + this.toString() + " razy " + other.toString());
 
 		int[] val1 = values;
 		int[] val2 = other.getValues();
@@ -225,7 +224,6 @@ public class BigInt {
 		while(!index.equals("0")) {
 			result = mul(result, val);
 			index = sub(index, "1");
-                        System.out.println("Model.BigInt.indexxxxx()" + index);
 		}
 		
 		return new BigInt(result);
@@ -233,7 +231,6 @@ public class BigInt {
 	
 	//mno�enie dw�ch string�w (potrzebne do dzielenia dw�ch BigInt�w)
 	public String mul(String val1, String val2) {
-		          System.out.println("Model.BigInt.mul()" + val1 + " *  "+ val2);
 		if(val1.length() == 1 && Character.getNumericValue(val1.charAt(0)) == 0) {
 			return "0";
 		}
@@ -384,6 +381,7 @@ public class BigInt {
 	}
 
    public boolean equals(BigInt x){
+       System.out.println("Model.BigInt.equals() porownanie " + this.toString() + " " +  x.toString());
        return this.toString().equals(x.toString());
    }
    public boolean notequals(BigInt x){

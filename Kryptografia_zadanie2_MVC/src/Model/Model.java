@@ -18,35 +18,21 @@ public class Model {
     private BigInt leftPRange;   
     private BigInt leftQRange;
     private BigInt d;
-   
-    public BigInt getleftPRange() {
-        return this.leftPRange;
-    }
     
-     public BigInt getleftQRange() {
-        return this.leftQRange;
-    }
-  
-    
-/**************************************
-Wyznaczamy zakres z jakiego ma być wyszukiwana nasza wartosć p
-według wzoru :
- [ n^b, 2*n^b * n^(1/4) - n^b]
- 
-**************************************/
+//******************************************************************************
     private void fill_P_KeyVariableRange(){
        this.leftPRange  = this.number_of_chars.pow(
                this.blockSize.add(
-                                    new BigInt("2").mul(this.blockSize.div(new BigInt("3"), false)))); //p bedzie wieksze od q o 2/3b
+                          new BigInt("2").mul(
+                                  this.blockSize.div(new BigInt("3"), false)))); //p bedzie wieksze od q o 2/3b
    }
-   
+    
+//******************************************************************************
    private void fill_Q_KeyVariableRange(){
        this.leftQRange = this.number_of_chars.pow( this.blockSize.add(new BigInt("1")));
    }
-    
-
-
    
+//******************************************************************************
    public boolean isEven(BigInt x) {
        if (x.div(new BigInt("2"), true).toString().equals(new BigInt("0").toString()))
            return true;
@@ -80,6 +66,7 @@ według wzoru :
    }
      
     public boolean testMileraRabina(BigInt x){
+        System.out.println("Model.Model.aaaaaaaaaaaaaaaa()");
         BigInt temp = new BigInt("1");
         BigInt two = new BigInt("2");
         BigInt one = new BigInt("1");
@@ -101,8 +88,11 @@ według wzoru :
             System.out.println("Zaczynamy petle " );
             
            do{     
-                randomDigit =randomDigit(x.sub(two)) ;
+                         
+
+                randomDigit =randomDigit(x) ;
                 breakResult = a_pow_d_mod_n(randomDigit,x);
+                  System.out.println("radnom " + randomDigit + " " + breakResult );
              }while(breakResult.equals(one) || breakResult.equals(x.sub(one)));
                    
                    
@@ -110,20 +100,23 @@ według wzoru :
           System.out.println("d " + d);
           System.out.println("x " + x);
 
-          BigInt r = new BigInt("1");
+          BigInt r = new BigInt("0");
           do{
-              breakResult = (breakResult.pow(two)).div(x, true);
+              /*breakResult = (breakResult.pow(two)).div(x, true);
               if(breakResult.equals(one) || breakResult.notequals(x.sub(one)))
                   return false;
               r = r.add(temp);
+              */
               
-
+                if((randomDigit.pow(this.d.mul(two.pow(r)))).equals(x.sub(one)))
+                    return false;
              
-                      
+                       r = r.add(temp);
                 System.out.println("Model.Model.testMileraRabina()" + r.toString()+ "\\n");
                                 System.out.println();
 
-            } while (r.isSmmaler(maxPow2) && breakResult.notequals(x.sub(one)));
+            } while (r.isSmmaler(maxPow2.sub(one)));
+//while (r.isSmmaler(maxPow2) && breakResult.notequals(x.sub(one)));
           }
               
          return true;
@@ -137,14 +130,16 @@ według wzoru :
      Random rand = new Random();
      int range = rand.nextInt(x.toString().length())+1;
      int digit;
-
+    
      for (int i = 0; i < range; i++) {
          ndigit = valueAsString.substring(i, i+1);
      
          if ( i>0 && i<range-1)
                 digit = rand.nextInt(Integer.parseInt(ndigit)+1);
-         else if (i == 0) 
+         else if (i == 0 && valueAsString.length() == range ) 
                 digit = rand.nextInt(Integer.parseInt(ndigit)) + 1;
+         else if (i == 0 ) 
+                digit =  rand.nextInt(Integer.parseInt(ndigit)+1);
          else 
                 digit = rand.nextInt(Integer.parseInt(ndigit)+1);
 
@@ -233,37 +228,7 @@ według wzoru :
         random.nextBytes(bytes);
         this.key = bytes;
     }
-    
-    public void xorData(byte[] data, byte[] key, int k){  
-        byte [] result = new byte[data.length];
-        for(int i=0; i< data.length; i++)
-        result[i] = (byte) (data[i]^key[i]);
-       if(k == 0)
-            this.encodedText = result;
-       else
-           this.plainText2 = result;
-    }
-
-    public byte[] getPlainText2(){
-        return this.plainText2;
-    }
-    public byte[] getKey(){
-        return this.key;
-    }
-    
-    public void setKey(byte[] key){
-        this.key = key;
-    }
-    
-    public byte[] getPlainText(){
-        return this.plainText;
-    }
-    
-    public byte[] getEncodedText(){
-        return encodedText;
-    }
-    
-    public void wypisz(byte[] text){
+      public void wypisz(byte[] text){
         for (int i=0; i< text.length; i++)
             System.out.println( String.format("bajt nr%8s :%8s", i, Integer.toBinaryString(text[i] & 0xFF)).replace(' ', '0'));
 
@@ -276,7 +241,51 @@ według wzoru :
         return result;
     }
     
+    public void xorData(byte[] data, byte[] key, int k){  
+        byte [] result = new byte[data.length];
+        for(int i=0; i< data.length; i++)
+        result[i] = (byte) (data[i]^key[i]);
+       if(k == 0)
+            this.encodedText = result;
+       else
+           this.plainText2 = result;
+    }
     
+//******************************************************************************
+//**************************** GETTERY *****************************************
+//******************************************************************************
     
+    public byte[] getPlainText2(){
+        return this.plainText2;
+    }
     
+ //**************************  
+    public byte[] getKey(){
+        return this.key;
+    }
+    
+ //**************************   
+    public void setKey(byte[] key){
+        this.key = key;
+    }
+    
+//**************************  
+    public byte[] getPlainText(){
+        return this.plainText;
+    }
+    
+//**************************
+    public byte[] getEncodedText(){
+        return encodedText;
+    }
+    
+//**************************
+public BigInt getleftPRange() {
+        return this.leftPRange;
+    }
+
+//**************************
+     public BigInt getleftQRange() {
+        return this.leftQRange;
+    }
 }
