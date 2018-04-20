@@ -65,109 +65,167 @@ public class Model {
        return (a.pow(this.d)).div(x,true);
    }
      
-    public boolean testMileraRabina(BigInt x){
+    public boolean testMileraRabina(BigInt p){
+        System.out.println("");
         System.out.println("Model.Model.aaaaaaaaaaaaaaaa()");
+
         BigInt temp = new BigInt("1");
         BigInt two = new BigInt("2");
         BigInt one = new BigInt("1");
         BigInt randomDigit;
-        BigInt breakResult;
+        BigInt x;
         
 // sprawdzamy czy liczba nie jest parzysta, jezeli jest nie jest ona liczbą pierwszą        
-        if (isEven(x))
+        if (isEven(p))
             return false;
 // Obliczamy Maksymalną potęgę 2 dzieląc x-1
-        BigInt maxPow2 = maxPowerOfTwo(x.sub(one));
-                  System.out.println("s " + maxPow2);
+                    System.out.println("p -1 " + p.sub(one));
+
+        BigInt s = maxPowerOfTwo(p.sub(one));
+                  System.out.println("s " + s);
 
 // Obliczamy wartosć d = 
-        this.d = x.div(new BigInt("2").pow(maxPow2), false);
+        this.d = p.div(new BigInt("2").pow(s), false);
         
-              
+              boolean flag = true;
         for(int i=0; i<this.accuracyMilerTest; i++){
             System.out.println("Zaczynamy petle " );
-            
-           do{
-              randomDigit =randomDigit(x) ;
-             }while((randomDigit.pow(this.d)).div(x,true).equals(one));
-                   
-                   
-          System.out.println("Random digit " + randomDigit);
-          System.out.println("d " + d);
-          System.out.println("x " + x);
-           boolean flag = false ; 
+                    System.out.println("d " + d);
+                    System.out.println("p " + p);
+                    System.out.println("");
+
+
+           
+                         
+
+                randomDigit =randomDigit(p.sub(two)) ;
+                x = a_pow_d_mod_n(randomDigit,p);
+                System.out.println("radnom " + randomDigit );
+                System.out.println("x 1" + x);
+                
+                if( x.equals(one) || x.equals(p.sub(one)))
+                    continue;
+                
+                for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j.add(one)){
+                    x = (x.pow(two)).div(p,true);
+                    if (x.equals(one)){
+                        flag = false;
+                        System.out.println("WYCHODZIMY 1");
+                        break;
+                    }
+                }
+                if(!flag)
+                    break;
+                if(x.notequals(p.sub(one))){
+                                            System.out.println("WYCHODZIMY 2");
+                    flag = false;
+                    break;
+                }
+        }
+        return flag;
+                    
+         /*           
+                      System.out.println("Random digit " + randomDigit);
+                      System.out.println("d " + d);
+                          System.out.println("x " + x);
+
           BigInt r = new BigInt("0");
           do{
               /*breakResult = (breakResult.pow(two)).div(x, true);
               if(breakResult.equals(one) || breakResult.notequals(x.sub(one)))
                   return false;
               r = r.add(temp);
-              */
               
-                if((randomDigit.pow(this.d.mul(two.pow(r)))).equals(x.sub(one))){
-                    flag = true;
-                     r = r.add(one);
-                    break;
-                }
+              
+                if((randomDigit.pow(this.d.mul(two.pow(r)))).equals(x.sub(one)))
+                    return false;
              
-                r = r.add(one);
-            
-            } while (r.isSmmaler(maxPow2));
-          
-          if ( flag == false)
-              return false;
+                       r = r.add(temp);
+                System.out.println("Model.Model.testMileraRabina()" + r.toString()+ "\\n");
+                                System.out.println();
+
+            } while (r.isSmmaler(maxPow2.sub(one)));
 //while (r.isSmmaler(maxPow2) && breakResult.notequals(x.sub(one)));
           }
               
-         return true;
+         return true;*/
     }
     
     
     public BigInt randomDigit(BigInt x){
      String ndigit;
      String valueAsString = x.toString();
+     int valueLength = valueAsString.length();
      StringBuilder value = new StringBuilder();
      Random rand = new Random();
-     int range = rand.nextInt(x.toString().length())+1;
      int digit;
-    
-     for (int i = 0; i < range; i++) {
-         ndigit = valueAsString.substring(i, i+1);
      
-         if ( i>0 && i<range-1)
-                digit = rand.nextInt(Integer.parseInt(ndigit)+1);
-         else if (i == 0 && valueAsString.length() == range ) 
-                digit = rand.nextInt(Integer.parseInt(ndigit)) + 1;
-         else if (i == 0 ) 
-                digit =  rand.nextInt(Integer.parseInt(ndigit)+1);
-         else 
-                digit = rand.nextInt(Integer.parseInt(ndigit)+1);
+    
+     
+     int range = rand.nextInt(x.toString().length())+1;
+     int[] result = new int[range];
+        System.out.println("RANGE  " + range);
 
-         value.append(Integer.toString(digit));
+     //Jezeli wylosowany zakres jest mniejszy of cyfry 
+     if(range < valueLength){
+        
+        for (int i=0; i<range; i++ ){
+            
+            if(i==0){
+                result[i] = rand.nextInt(9)+1;
+                System.out.println("ModelCZEMU TU JESTEM "  + result[i]);}
+            else
+                result[i] = rand.nextInt(10);
         }
-        x = new BigInt(value.toString());
-        return x ;
-    }
-        
-        
-        
-        
-    
-    
-    
-    
-    /*
-    void randomVariableP(){
-        for( int i=this.leftPRange; i<this.rightPRange; i++){
+     }
+     
+     else{
+         boolean flag = false;
+         for (int i=0; i<range; i++ ){
+                  ndigit = valueAsString.substring(i, i+1);
+
+             if(i==0){
+                 result[i]=rand.nextInt(Integer.parseInt(ndigit))+1;
+             }
+             else{
+                    if (!flag){
+                     for(int z=0; z<i; z++){
+                        if (Integer.parseInt(valueAsString.substring(z, z+1)) > result[z] )
+                            flag=true;
+                       }
+                    }
+                    if(flag)
+                        result[i] =  result[i] = rand.nextInt(10);
+                    else
+                        result[i] = rand.nextInt(Integer.parseInt(ndigit)+1);
+
+                }
+     
+            }
+     
         }
-    }
+     for (int t=0; t<range; t++)
+          value.append(result[t]);
+        System.out.println("WYLOSOWANO " + value.toString());
+    return new BigInt(value.toString());
+          
+  }
+     
+     
+     
+     
+     
+ 
+        
+        
+        
     
-    
+
     
     
     
    
-   **************************************/
+  // **************************************/
    private byte[] plainText;
    private byte[] encodedText;
    private byte[] key;

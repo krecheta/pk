@@ -110,7 +110,7 @@ public class BigInt {
 				s.append(sub);
 			}
 		}
-		
+		          System.out.println("Model.BigInt.sub()" + cutZeros(s.reverse().toString()));
 		return new BigInt(cutZeros(s.reverse().toString()));
 	}
 	
@@ -224,6 +224,7 @@ public class BigInt {
 		while(!index.equals("0")) {
 			result = mul(result, val);
 			index = sub(index, "1");
+                        System.out.println("index " + index);
 		}
 		
 		return new BigInt(result);

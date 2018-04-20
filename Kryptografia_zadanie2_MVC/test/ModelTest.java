@@ -20,20 +20,22 @@ import sun.nio.cs.ext.Big5;
  * @author edodomi
  */
 public class ModelTest {
-/*
+
   @org.junit.Test
   public void test1LeftPVariableRange(){
-         BigInt number_of_chars = new BigInt("2");
+       /* BigInt number_of_chars = new BigInt("2");
          BigInt blockSize = new BigInt("4");
          int accuracyMilerTest =3;
          Model model = new Model(number_of_chars, blockSize, accuracyMilerTest);
          BigInt expected = new BigInt("64");
-         
-         assertEquals(expected.toString(),model.getleftPRange().toString());
+        */
+         //assertEquals(expected.toString(),model.getleftPRange().toString());
+         assertEquals(new BigInt("109"), new BigInt("110").sub(new BigInt("1")));
          
      }
-     
-
+}
+      
+/*
    @org.junit.Test
    public void test1LeftQVariableRange(){
          BigInt number_of_chars = new BigInt("2");
@@ -116,7 +118,7 @@ public class ModelTest {
         assertEquals(true, new BigInt("5223").isBigger(new BigInt("643")));
         assertEquals(true, new BigInt("59999").isBigger(new BigInt("6002")));
     }    
-   */
+   
     @org.junit.Test
    public void testMilerRabinFunction(){
     BigInt number_of_chars = new BigInt("21");
@@ -182,14 +184,15 @@ public class ModelTest {
       
     //assertEquals(false, model.testMileraRabina(new BigInt("77")));
     //assertEquals(false, model.testMileraRabina(new BigInt("85")));
-   } 
-   /*
+  // } 
+    /*
    @org.junit.Test
     public void addtestAplusB(){
         boolean flag = true; 
         
-        for(int x=0; x<100; x++){
-            for(int y=0; y<100; y++){
+        for(int x=0; x<10000; x++){
+            for(int y=0; y<10000; y++){
+                                    System.out.println("ModelTest.addtest() " + x + " + " + y);
                 if (!((Integer.toString(x+y)).equals(new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(y))).toString()))){
                     System.out.println("ModelTest.addtest() " + x + " + " + y);
                     flag =false;
@@ -199,13 +202,13 @@ public class ModelTest {
         }
               assertEquals(true,flag);
     }
-    
+   
        @org.junit.Test
     public void addtestBplusA(){
         boolean flag = true; 
         
-        for(int x=0; x<100; x++){
-            for(int y=0; y<100; y++){
+        for(int x=0; x<10000; x++){
+            for(int y=0; y<10000; y++){
                 if (!((Integer.toString(y+x)).equals(new BigInt(Integer.toString(y)).add(new BigInt(Integer.toString(x))).toString()))){
                     System.out.println("ModelTest.addtest() " + y + " + " + x);
                     flag =false;
@@ -220,8 +223,8 @@ public class ModelTest {
     public void multestAmulB(){
         boolean flag = true; 
         
-        for(int x=0; x<100; x++){
-            for(int y=0; y<100; y++){
+        for(int x=0; x<10000; x++){
+            for(int y=0; y<10000; y++){
                 if (!((Integer.toString(x*y)).equals(new BigInt(Integer.toString(x)).mul(new BigInt(Integer.toString(y))).toString()))){
                     System.out.println("ModelTest.addtest() " + x + " * " + y);
                     flag =false;
@@ -235,8 +238,8 @@ public class ModelTest {
     public void multestBmulA(){
         boolean flag = true; 
         
-        for(int x=0; x<100; x++){
-            for(int y=0; y<100; y++){
+        for(int x=0; x<10000; x++){
+            for(int y=0; y<10000; y++){
                 if (!((Integer.toString(y*x)).equals(new BigInt(Integer.toString(y)).mul(new BigInt(Integer.toString(x))).toString()))){
                     System.out.println("ModelTest.addtest() " + y + " * " + x);
                     flag =false;
@@ -251,8 +254,8 @@ public class ModelTest {
     public void divXbyYtest(){
         boolean flag = true; 
         
-        for(int x=1; x<100; x++){
-            for(int y=1; y<100; y++){
+        for(int x=1; x<10000; x++){
+            for(int y=1; y<10000; y++){
                 if (!((Integer.toString(x/y)).equals(new BigInt(Integer.toString(x)).div(new BigInt(Integer.toString(y)),false).toString()))){
                     System.out.println("ModelTest.addtest() " + x + " / " + y);
                     flag =false;
@@ -268,8 +271,8 @@ public class ModelTest {
     public void divYbyXtest(){
         boolean flag = true; 
         
-        for(int x=1; x<100; x++){
-            for(int y=1; y<100; y++){
+        for(int x=1; x<10000; x++){
+            for(int y=1; y<10000; y++){
                 if (!((Integer.toString(y/x)).equals(new BigInt(Integer.toString(y)).div(new BigInt(Integer.toString(x)),false).toString()))){
                     System.out.println("ModelTest.divtest() " + y + " / " + x);
                     flag =false;
@@ -287,8 +290,8 @@ public class ModelTest {
     public void modXbyYtest(){
         boolean flag = true; 
         
-        for(int x=1; x<100; x++){
-            for(int y=1; y<100; y++){
+        for(int x=1; x<10000; x++){
+            for(int y=1; y<10000; y++){
                 if (!((Integer.toString(x%y)).equals(new BigInt(Integer.toString(x)).div(new BigInt(Integer.toString(y)),true).toString()))){
                     System.out.println("ModelTest.mod() " + x + " mod " + y);
                     flag =false;
@@ -304,8 +307,8 @@ public class ModelTest {
     public void modYbyXtest(){
         boolean flag = true; 
         
-        for(int x=1; x<100; x++){
-            for(int y=1; y<100; y++){
+        for(int x=1; x<10000; x++){
+            for(int y=1; y<10000; y++){
                 if (!((Integer.toString(y%x)).equals(new BigInt(Integer.toString(y)).div(new BigInt(Integer.toString(x)),true).toString()))){
                     System.out.println("ModelTest.mod() " + y + " mod " + x);
                     flag =false;
@@ -315,8 +318,10 @@ public class ModelTest {
                     }
         }
               assertEquals(true,flag);
-    }
+ */
+
+
     
-   */ 
-}
+   
+
 
