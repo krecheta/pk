@@ -19,6 +19,8 @@ public class Model {
     private BigInt leftPRange;   
     private BigInt leftQRange;
     private BigInt d;
+    private BigInt publickey;
+
     
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
@@ -157,7 +159,7 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
        
        
         System.out.println("Wylosowano P oraz Q, P=" + this.p + " Q=" + this.q + " "+ wynik1+ " " +wynik2 + " " +wynik3);
-        
+        this.publickey = this.p.mul(this.q);
     }
     
     
@@ -359,11 +361,23 @@ public BigInt getleftPRange() {
         return this.leftQRange;
     }
 
-
+//**************************
     public BigInt getP() {
         return this.p;
     }
-   public BigInt getQ() {
+    
+//**************************    
+    public String getPrivateKey(){
+        return new String("p: " + this.p.toString() + "\n" + "q: " + this.q.toString() );
+    }
+    
+//**************************
+    public String getPublicKey(){
+        return this.publickey.toString();
+    }
+    
+//**************************
+    public BigInt getQ() {
         return this.q;
     }
 }

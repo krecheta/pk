@@ -31,13 +31,13 @@ public class Controller {
         this.view.addDecryptedListener(new DecryptedListener());
         this.view.addEncryptedFileListener(new EncryptedFileListener());
         this.view.addDecryptedFileListener(new DecryptedFileListener());
+        this.view.addGenerateKey(new GenerateKey());
 
     }
     
     class EncryptedListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
-            System.out.println( "AAA " +view.getPlainText());
             byte[] plaintTextInBytes = view.getPlainText().getBytes();
             model.generateKey(plaintTextInBytes.length);
             model.xorData(plaintTextInBytes, model.getKey(), 0);
@@ -54,6 +54,14 @@ public class Controller {
             byte[] decrypted = model.getPlainText2();
             view.setPlainText2(new String(decrypted));
             }
+    }
+    class GenerateKey implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e){
+            model.choose_P_AND_Q();
+            view.setPrivateKey(model.getPrivateKey());
+            view.setPublicKey(model.getPublicKey());
+        }
     }
     
     class DecryptedFileListener implements ActionListener{
