@@ -12,7 +12,7 @@ import java.util.Random;
 public class Model {
     
     private BigInt HowManyBytes;// = new BigInt("2");  //dlugosc wiadomosci czyli jak wynosi 8 to bedzie tam mozna umiescic 8 bitow
-    private BigInt HowManyBytesRepeat;// = new BigInt("4"); // dodatkowe bity
+    private BigInt HowManyBytesWithRepeatedBytes;// = new BigInt("4"); // dodatkowe bity
     private int accuracyMilerTest ;//Dokladonsc testu MIlera  opisana wzorem 1-(1/4)^n  <-- n == accuracyMilerTest
     private BigInt p;  //klucz 1 czesc
     private BigInt q;  //klucz 2 czesc
@@ -24,14 +24,14 @@ public class Model {
     
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
-        this.leftPRange  = new BigInt("2").pow(this.HowManyBytesRepeat.add(new BigInt("2")));
+        this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
                this.leftPRange = new BigInt("88");
 
     }
     
 //******************************************************************************
    private void fill_Q_KeyVariableRange(){
-       //this.leftQRange = new BigInt("2").pow(this.HowManyBytesRepeat.add(new BigInt("1")));
+       this.leftQRange = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("1")));
        this.leftQRange = new BigInt("26");
    }
    
@@ -256,15 +256,15 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
 //**************************    
    private byte[] plainText;
    private byte[] encodedText;
+   private byte[] decodedText;
    private byte[] key;
    private byte[] plainText2;
    
    //Mnozymy razy 8 bo bedziemy szyfrowac po jednym bajcie minimalnie
    
       public Model(BigInt number_of_chars,int accuracyMilerTest){
-        BigInt eight = new BigInt("8");
-        this.HowManyBytes = number_of_chars.mul(eight);
-        this.HowManyBytesRepeat = this.HowManyBytes.mul(new BigInt("2"));
+        this.HowManyBytes = number_of_chars; // ile bajtow ma byc 
+        this.HowManyBytesWithRepeatedBytes = this.HowManyBytes.mul(new BigInt("2")); // ma byc zawsze dwa razy wiecej bajtow;
         this.accuracyMilerTest = accuracyMilerTest;
         this.fill_P_KeyVariableRange();
         this.fill_Q_KeyVariableRange();
@@ -278,24 +278,21 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
     }
     
 //******************************************************************************
-      public void readKeyAsBinary(String filepath) throws IOException{        
-        FileInputStream input = new FileInputStream(filepath);
-        this.key = Files.readAllBytes(Paths.get(filepath));
+      public void readKeyAsBinary(String privatekey, String publickey) throws IOException{        
+        FileInputStream input = new FileInputStream(privatekey);
+        this.key = Files.readAllBytes(Paths.get(privatekey));
         input.close();
     }
       
 //******************************************************************************
-      public void saveFileAsBinary(byte[] data, String filepath)throws IOException{
-        FileOutputStream output = new FileOutputStream(filepath);
-        output.write(data);
+      public void saveFileAsBinary(byte[] dataprivatekey, byte[] datapublickey,String privatekey, String publickey)throws IOException{
+        FileOutputStream output = new FileOutputStream(privatekey);
+        output.write(dataprivatekey);
         output.close();
-    }
-//******************************************************************************
-    public void generateKey(int dataSize){
-        SecureRandom random = new SecureRandom();
-        byte [] bytes = new byte[dataSize]; // 128 bits are converted to 16 bytes;
-        random.nextBytes(bytes);
-        this.key = bytes;
+        
+        FileOutputStream output2 = new FileOutputStream(publickey);
+        output.write(datapublickey);
+        output.close();
     }
     
 //******************************************************************************
@@ -305,24 +302,32 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
     }
 
 //******************************************************************************
-    public int intPow(int blockSize, int wordLen) {
-        int result=blockSize;
-        for (int i=0; i<wordLen; i++ )
-            result = result * blockSize;
-        return result;
-    }
+ public void encode(byte[] var){
+     BigInt varLengthnew = new BigInt(Integer.toString(var.length));
+     BigInt one = new BigInt("1");
+     BigInt eight = new BigInt("8");
+     BigInt message;
+     
+
+     byte[] var2  = new byte[var.length*((var.length/8)/Integer.parseInt(this.HowManyBytes.toString()))];// dlugosc tablicy do zakodowania nowego tekstu 
+     byte [] bytesWithAddedbyte = new byte[Integer.parseInt(this.HowManyBytesWithRepeatedBytes.toString())*8];
     
-//******************************************************************************
-    public void xorData(byte[] data, byte[] key, int k){  
-        byte [] result = new byte[data.length];
-        for(int i=0; i< data.length; i++)
-        result[i] = (byte) (data[i]^key[i]);
-       if(k == 0)
-            this.encodedText = result;
-       else
-           this.plainText2 = result;
-    }
+     for (BigInt i = new BigInt("0"); i.isSmmaler(varLengthnew.div(this.HowManyBytes,false)); i=i.add(one)){
+         if(varLengthnew.isSmmaler(this.HowManyBytes.mul(eight))){
+            for(int z=0; z<bytesWithAddedbyte.length; z++)                
+                 bytesWithAddedbyte[z] = var[z % var.length]; // przekopiowana tablcia 
+            
+            message = new BigInt(Integer.toString(Integer.parseInt(bytesWithAddedbyte.toString()))); // nasza cyfra m
+            this.encodedText = 
+                message.div(this.publickey,true).toString().getBytes();
+             
+         }
+         
+     }
+         
+ }
     
+
 //******************************************************************************
 //**************************** GETTERY *****************************************
 //******************************************************************************

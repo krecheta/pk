@@ -39,8 +39,8 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e){
             byte[] plaintTextInBytes = view.getPlainText().getBytes();
-            model.generateKey(plaintTextInBytes.length);
-            model.xorData(plaintTextInBytes, model.getKey(), 0);
+          ///  model.xorData(plaintTextInBytes, model.getKey(), 0);
+           model.encode(plaintTextInBytes); // szyfruje nasz tekst 
             byte[] encrypted = model.getEncodedText();
             view.setEncodedText(new String(encrypted));
         }
@@ -50,7 +50,7 @@ public class Controller {
     class DecryptedListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
-            model.xorData(model.getEncodedText(),model.getKey(), 1);
+          //  model.xorData(model.getEncodedText(),model.getKey(), 1);
             byte[] decrypted = model.getPlainText2();
             view.setPlainText2(new String(decrypted));
             }
@@ -154,20 +154,20 @@ public class Controller {
                 model.readFileAsBinary(selectFileView.getReadFileText());
                 if(selectFileView.getStateKeyRadio() != null){
                     System.out.println("Klucz wygenerowano dynamicznie");
-                    model.generateKey(model.getPlainText().length);
+                    //model.generateKey(model.getPlainText().length);
                 }
                 
                 else{
-                    model.readKeyAsBinary(selectFileView.getKeyPath());
+                  //  model.readKeyAsBinary(selectFileView.getKeyPath());
                     if (model.getKey().length < model.getPlainText().length){
                         System.out.println("Klucz wygenerowano dynamicznie z uwagi na zbyt krótki klucz w pliku");
-                        model.generateKey(model.getPlainText().length);
+                     //   model.generateKey(model.getPlainText().length);
                     }
                 }
                 
-                model.xorData(model.getPlainText(), model.getKey(),0);
-                model.saveFileAsBinary(model.getKey(), "KOD.txt");  // zapisujemy klucz aby sprawdzic odkodowywanie 
-                model.saveFileAsBinary(model.getEncodedText(),selectFileView.getSaveFileText());
+               // model.xorData(model.getPlainText(), model.getKey(),0);
+                //model.saveFileAsBinary(model.getKey(), "KOD.txt");  // zapisujemy klucz aby sprawdzic odkodowywanie 
+                //model.saveFileAsBinary(model.getEncodedText(),selectFileView.getSaveFileText());
                 this.selectFileView.dispose();
                 JOptionPane.showMessageDialog(null, "Completed successfully");
             }
