@@ -338,6 +338,7 @@ public class BigInt {
 			if(i > 0 || sub > 0) {
 				s.append(sub);
 			}
+			carry = 0;
 		}
 		return cutZeros(s.reverse().toString());
 	}
