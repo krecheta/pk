@@ -20,18 +20,28 @@ import sun.nio.cs.ext.Big5;
  * @author edodomi
  */
 public class ModelTest {
-
+@org.junit.Test
+    public void generateKey(){
+         BigInt number_of_chars = new BigInt("2");
+         BigInt blockSize = new BigInt("4");
+         int accuracyMilerTest =3;
+         Model model = new Model(number_of_chars, blockSize, accuracyMilerTest);
+         BigInt expected = new BigInt("64");  
+    }
+        
+    
+    
+    /*
   @org.junit.Test
   public void test1LeftPVariableRange(){
-       /* BigInt number_of_chars = new BigInt("2");
+       BigInt number_of_chars = new BigInt("2");
          BigInt blockSize = new BigInt("4");
          int accuracyMilerTest =3;
          Model model = new Model(number_of_chars, blockSize, accuracyMilerTest);
          BigInt expected = new BigInt("64");
-        */
+    
          //assertEquals(expected.toString(),model.getleftPRange().toString());
-         System.out.println("ModelTest.test1LeftPVariableRange( ) " + new BigInt("110").sub(new BigInt("1")).toString());
-         assertEquals(new BigInt("109").toString(), new BigInt("110").sub(new BigInt("1")).toString());
+         assertEquals(new BigInt("109"), new BigInt("110").sub(new BigInt("1")));
          
      }
 }
@@ -119,12 +129,12 @@ public class ModelTest {
         assertEquals(true, new BigInt("5223").isBigger(new BigInt("643")));
         assertEquals(true, new BigInt("59999").isBigger(new BigInt("6002")));
     }    
-   
+   */
     @org.junit.Test
    public void testMilerRabinFunction(){
     BigInt number_of_chars = new BigInt("21");
     BigInt blockSize = new BigInt("4");
-    int accuracyMilerTest =20;
+    int accuracyMilerTest =10;
      boolean flag=true;
     int[] list = {17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,
                 103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,
@@ -133,7 +143,7 @@ public class ModelTest {
                 433,439,443,449,457,461,463,467,479,487,491,499,503,509,521,523,541,547,557,
                 563,569,571,577,587,593,599,601,607,613,617,619,631,641,643,647,653,659,661,
                 673,677,683,691,701,709,719,727,733,739,743,751,757,761,769,773,787,797,809,
-                811,821,823,827,829,839,853,857,859,86%3,877,881,883,887,907,911,919,929,937,
+                811,821,823,827,829,839,853,857,859,863,877,881,883,887,907,911,919,929,937,
                 941,947,953,967,971,977,983,991,997,1009,1013,1019,1021,1031,1033,1039,1049,
                 1051,1061,1063,1069,1087,1091,1093,1097,1103,1109,1117,1123,1129,1151,1153,1163,
                 1171,1181,1187,1193,1201,1213,1217,1223,1229,1231,1237,1249,1259,1277,1279,1283,
@@ -153,7 +163,7 @@ public class ModelTest {
 
     Model model = new Model(number_of_chars, blockSize, accuracyMilerTest);
    
-        System.out.println("ModelTest.zaczynam ()");
+    System.out.println("ModelTest.zaczynam ()");
    for (int i=0;i<list.length; i++){
        if (!(model.testMileraRabina(new BigInt(Integer.toString(list[i])))))
        {
@@ -166,7 +176,7 @@ public class ModelTest {
    /*
    // Test milera dla wyniku liczby zlozonej 
    flag = false;
-   for (int i=0;i<list.length; i++){
+   for (int i=0;i<list.length-1; i++){
        
        if (model.testMileraRabina(new BigInt(Integer.toString((list[i] +((list[i+1]-list[i])/2))   ))))
        {
@@ -177,15 +187,7 @@ public class ModelTest {
       
    }
     assertEquals(true, flag);
-       */
-    //assertEquals(true, model.testMileraRabina(79039));
-    //assertEquals(true, model.testMileraRabina(99241));
-       
-      // False
-      
-    //assertEquals(false, model.testMileraRabina(new BigInt("77")));
-    //assertEquals(false, model.testMileraRabina(new BigInt("85")));
-  // } 
+}*/} }
     /*
    @org.junit.Test
     public void addtestAplusB(){

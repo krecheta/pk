@@ -109,8 +109,8 @@ public class BigInt {
 			if(i > 0 || sub > 0) {
 				s.append(sub);
 			}
+                        carry=0;
 		}
-		          System.out.println("Model.BigInt.sub()" + cutZeros(s.reverse().toString()));
 		return new BigInt(cutZeros(s.reverse().toString()));
 	}
 	
@@ -224,7 +224,6 @@ public class BigInt {
 		while(!index.equals("0")) {
 			result = mul(result, val);
 			index = sub(index, "1");
-                        System.out.println("index " + index);
 		}
 		
 		return new BigInt(result);
@@ -383,7 +382,7 @@ public class BigInt {
 	}
 
    public boolean equals(BigInt x){
-       System.out.println("Model.BigInt.equals() porownanie " + this.toString() + " " +  x.toString());
+       System.out.println("Model.BigInt.equals() porownanie " + this.toString() + " " +  x.toString() + " " +this.toString().equals(x.toString()));
        return this.toString().equals(x.toString());
    }
    public boolean notequals(BigInt x){

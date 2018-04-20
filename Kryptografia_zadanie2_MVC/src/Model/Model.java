@@ -10,26 +10,27 @@ import java.util.Random;
 
 
 public class Model {
-    private BigInt number_of_chars;// = new BigInt("2");  //dlugosc wiadomosci
-    private BigInt blockSize;// = new BigInt("4"); // Dlugosc bloku czly wiadomosc + dodatkowe bity
+    
+    private BigInt HowManyBytes;// = new BigInt("2");  //dlugosc wiadomosci czyli jak wynosi 8 to bedzie tam mozna umiescic 8 bitow
+    private BigInt HowManyBytesRepeat;// = new BigInt("4"); // dodatkowe bity
     private int accuracyMilerTest ;//Dokladonsc testu MIlera  opisana wzorem 1-(1/4)^n  <-- n == accuracyMilerTest
-    private int p;  //klucz 1 czesc
-    private int q;  //klucz 2 czesc
+    private BigInt p;  //klucz 1 czesc
+    private BigInt q;  //klucz 2 czesc
     private BigInt leftPRange;   
     private BigInt leftQRange;
     private BigInt d;
     
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
-       this.leftPRange  = this.number_of_chars.pow(
-               this.blockSize.add(
-                          new BigInt("2").mul(
-                                  this.blockSize.div(new BigInt("3"), false)))); //p bedzie wieksze od q o 2/3b
-   }
+        this.leftPRange  = new BigInt("2").pow(this.HowManyBytesRepeat.add(new BigInt("2")));
+               this.leftPRange = new BigInt("88");
+
+    }
     
 //******************************************************************************
    private void fill_Q_KeyVariableRange(){
-       this.leftQRange = this.number_of_chars.pow( this.blockSize.add(new BigInt("1")));
+       //this.leftQRange = new BigInt("2").pow(this.HowManyBytesRepeat.add(new BigInt("1")));
+       this.leftQRange = new BigInt("26");
    }
    
 //******************************************************************************
@@ -40,8 +41,9 @@ public class Model {
            return false;
    }
    
+//******************************************************************************
    public BigInt maxPowerOfTwo(BigInt x){
-       BigInt result = new BigInt("0");
+       BigInt result;
        BigInt breakVariable = new BigInt("0");
        BigInt two = new BigInt("2");
        BigInt counter = new BigInt("1");
@@ -61,10 +63,13 @@ public class Model {
        return counter.sub(temp); // return s
        
    }
+   
+//******************************************************************************
    public BigInt a_pow_d_mod_n(BigInt a, BigInt x){
        return (a.pow(this.d)).div(x,true);
    }
-     
+
+//******************************************************************************
     public boolean testMileraRabina(BigInt p){
         System.out.println("");
         System.out.println("Model.Model.aaaaaaaaaaaaaaaa()");
@@ -98,15 +103,16 @@ public class Model {
            
                          
 
-                randomDigit =randomDigit(p.sub(two)) ;
+                randomDigit =randomDigit(two,p.sub(two)) ;
                 x = a_pow_d_mod_n(randomDigit,p);
                 System.out.println("radnom " + randomDigit );
-                System.out.println("x 1" + x);
+                System.out.println("x 1 " + x);
                 
                 if( x.equals(one) || x.equals(p.sub(one)))
                     continue;
                 
-                for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j.add(one)){
+                for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j=j.add(one)){
+                    System.out.println("JJJJJ " + j);
                     x = (x.pow(two)).div(p,true);
                     if (x.equals(one)){
                         flag = false;
@@ -123,51 +129,56 @@ public class Model {
                 }
         }
         return flag;
-                    
-         /*           
-                      System.out.println("Random digit " + randomDigit);
-                      System.out.println("d " + d);
-                          System.out.println("x " + x);
+    }
+    
+//******************************************************************************
+    public void choose_P_AND_Q(){
+    
+         BigInt one = new BigInt("1");
+        BigInt two = new BigInt("2");
+        BigInt three = new BigInt("3");
+        BigInt four = new BigInt("4");
 
-          BigInt r = new BigInt("0");
-          do{
-              /*breakResult = (breakResult.pow(two)).div(x, true);
-              if(breakResult.equals(one) || breakResult.notequals(x.sub(one)))
-                  return false;
-              r = r.add(temp);
-              
-              
-                if((randomDigit.pow(this.d.mul(two.pow(r)))).equals(x.sub(one)))
-                    return false;
-             
-                       r = r.add(temp);
-                System.out.println("Model.Model.testMileraRabina()" + r.toString()+ "\\n");
-                                System.out.println();
-
-            } while (r.isSmmaler(maxPow2.sub(one)));
-//while (r.isSmmaler(maxPow2) && breakResult.notequals(x.sub(one)));
-          }
-              
-         return true;*/
+this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(two, false)));
+        //random P digit
+       while(!(!this.p.div(four,true).notequals(three) && testMileraRabina(this.p))){
+           this.p=this.p.add(one);
+         
+       }
+       
+ boolean wynik1= true;boolean wynik2 = true; boolean wynik3 = true;
+  this.q = randomDigit(this.leftQRange, this.leftQRange.add(this.leftQRange.div(two, false)));
+      while(!(!this.q.div(four,true).notequals(three) && testMileraRabina(this.q))){
+          this.q=this.q.add(one);
+           wynik1 = (!(!this.q.div(four,true).notequals(three) && testMileraRabina(this.q)));
+          wynik2  =  testMileraRabina(this.q);
+          wynik3 = (!this.q.div(four,true).notequals(three));
+     }
+       
+       
+        System.out.println("Wylosowano P oraz Q, P=" + this.p + " Q=" + this.q + " "+ wynik1+ " " +wynik2 + " " +wynik3);
+        
     }
     
     
-    public BigInt randomDigit(BigInt x){
-     String ndigit;
-     String valueAsString = x.toString();
-     int valueLength = valueAsString.length();
+//******************************************************************************
+    public BigInt randomDigit(BigInt left, BigInt right){
+        System.out.println("XXXX " + left.toString() + " " + right.toString());
+     String valueLeftAsString = left.toString();
+      String valueRightAsString = right.toString();
+     int valueLeftLength = valueLeftAsString.length();
+     int valueRightLength = valueRightAsString.length();
      StringBuilder value = new StringBuilder();
      Random rand = new Random();
      int digit;
-     
-    
-     
-     int range = rand.nextInt(x.toString().length())+1;
+     String ndigit;
+
+     int range = rand.nextInt(valueRightLength - valueLeftLength +1)+(valueLeftLength);
      int[] result = new int[range];
         System.out.println("RANGE  " + range);
 
      //Jezeli wylosowany zakres jest mniejszy of cyfry 
-     if(range < valueLength){
+     if(range < valueRightLength && range > valueLeftLength){
         
         for (int i=0; i<range; i++ ){
             
@@ -179,10 +190,24 @@ public class Model {
         }
      }
      
-     else{
+     else if(range < valueRightLength && range == valueLeftLength){
+         
+         for (int i=0; i<range; i++ ){
+                  ndigit = valueLeftAsString.substring(i, i+1);
+
+             if(i==0)
+                 result[i]=rand.nextInt(10 - Integer.parseInt(ndigit))+Integer.parseInt(ndigit);
+             
+             else
+                 result[i] = rand.nextInt(10);
+     
+            }
+     }
+   
+     else if(range == valueRightLength && range > valueLeftLength) {
          boolean flag = false;
          for (int i=0; i<range; i++ ){
-                  ndigit = valueAsString.substring(i, i+1);
+                  ndigit = valueRightAsString.substring(i, i+1);
 
              if(i==0){
                  result[i]=rand.nextInt(Integer.parseInt(ndigit))+1;
@@ -190,7 +215,7 @@ public class Model {
              else{
                     if (!flag){
                      for(int z=0; z<i; z++){
-                        if (Integer.parseInt(valueAsString.substring(z, z+1)) > result[z] )
+                        if (Integer.parseInt(valueRightAsString.substring(z, z+1)) > result[z] )
                             flag=true;
                        }
                     }
@@ -198,100 +223,86 @@ public class Model {
                         result[i] =  result[i] = rand.nextInt(10);
                     else
                         result[i] = rand.nextInt(Integer.parseInt(ndigit)+1);
-
                 }
-     
             }
-     
         }
+     else
+          for(int z=0; z<range; z++){
+              int rndigit = Integer.parseInt(valueRightAsString.substring(z, z+1));
+              int lndigit =  Integer.parseInt(valueLeftAsString.substring(z, z+1));
+             //zamiana miejscami jezeli zakres prawostronny jest wiekszy niz lewo stronny 
+              if(rndigit < lndigit){
+                  rndigit+= lndigit;
+                  lndigit = rndigit - lndigit;
+                  rndigit -= lndigit;
+              }
+                  
+              System.out.println("Model.Model.randomDigit()       " +rndigit + "    " + lndigit );
+              result[z] = rand.nextInt(rndigit - lndigit +1 )+ lndigit;
+          
+          }
+     
+     
      for (int t=0; t<range; t++)
           value.append(result[t]);
         System.out.println("WYLOSOWANO " + value.toString());
     return new BigInt(value.toString());
           
   }
-     
-     
-     
-     
-     
- 
-        
-        
-        
-    
 
-    
-    
-    
-   
-  // **************************************/
+//******************************************************************************
+//**************************    
    private byte[] plainText;
    private byte[] encodedText;
    private byte[] key;
    private byte[] plainText2;
    
+   //Mnozymy razy 8 bo bedziemy szyfrowac po jednym bajcie minimalnie
    
-
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-      public Model(BigInt number_of_chars, BigInt blockSize,int accuracyMilerTest){
-        this.number_of_chars = number_of_chars;
-        this.blockSize = blockSize;
+      public Model(BigInt number_of_chars,int accuracyMilerTest){
+        BigInt eight = new BigInt("8");
+        this.HowManyBytes = number_of_chars.mul(eight);
+        this.HowManyBytesRepeat = this.HowManyBytes.mul(new BigInt("2"));
         this.accuracyMilerTest = accuracyMilerTest;
         this.fill_P_KeyVariableRange();
         this.fill_Q_KeyVariableRange();
 
     }
-   
-   
-      
-      public void readFileAsBinary(String filepath) throws IOException{        
+//******************************************************************************
+    public void readFileAsBinary(String filepath) throws IOException{        
         FileInputStream input = new FileInputStream(filepath);
         this.plainText = Files.readAllBytes(Paths.get(filepath));
         input.close();
     }
-      
+    
+//******************************************************************************
       public void readKeyAsBinary(String filepath) throws IOException{        
         FileInputStream input = new FileInputStream(filepath);
         this.key = Files.readAllBytes(Paths.get(filepath));
         input.close();
     }
       
+//******************************************************************************
       public void saveFileAsBinary(byte[] data, String filepath)throws IOException{
         FileOutputStream output = new FileOutputStream(filepath);
         output.write(data);
         output.close();
     }
-
+//******************************************************************************
     public void generateKey(int dataSize){
         SecureRandom random = new SecureRandom();
         byte [] bytes = new byte[dataSize]; // 128 bits are converted to 16 bytes;
         random.nextBytes(bytes);
         this.key = bytes;
     }
+    
+//******************************************************************************
       public void wypisz(byte[] text){
         for (int i=0; i< text.length; i++)
             System.out.println( String.format("bajt nr%8s :%8s", i, Integer.toBinaryString(text[i] & 0xFF)).replace(' ', '0'));
-
     }
 
+//******************************************************************************
     public int intPow(int blockSize, int wordLen) {
         int result=blockSize;
         for (int i=0; i<wordLen; i++ )
@@ -299,6 +310,7 @@ public class Model {
         return result;
     }
     
+//******************************************************************************
     public void xorData(byte[] data, byte[] key, int k){  
         byte [] result = new byte[data.length];
         for(int i=0; i< data.length; i++)
@@ -346,4 +358,35 @@ public BigInt getleftPRange() {
      public BigInt getleftQRange() {
         return this.leftQRange;
     }
+
+
+    public BigInt getP() {
+        return this.p;
+    }
+   public BigInt getQ() {
+        return this.q;
+    }
 }
+
+
+/*
+Zakres wybieramy tak: mamy x1 oraz x2 gdzie x1 oznacza ilosc bitow ile bedziemy 
+kodowac  a x2 jak duzy blok potrzebujemy aby zakodowac + dodatkowe bity
+np mamy x1=1 x2=16
+
+to wtedy bedziemy kodowac 8 bitow a wiadomosc bedzie miala dlugosc 16 bity 
+wiec aby miec miejsce na cala wiadomosc musimy miec liczbę większą niz 2^16
+ale zaby p i q byly oddalone od siebie wybieramy zakres minimalny dla p  o 2 wiekszy niz dla q a dla q o jeden wikszy niz x2
+czyli gdy x1=1 x2=2 to 
+zakres dla p lewostronny wynosi  2^16+2 czyli 2^18
+zakres dla q lewostronny wynosi  2^16+1 czyli 2^17
+
+
+
+p losujemy wiec z zakresu lewostronnego2^18 
+    a prawostronny to lewostronny +1/2lewostronny  
+
+q losujemy wiec z zakresu lewostronnego 2^17 
+    a prawostronny to lewostronny +1/3lewostronny    
+
+*/
