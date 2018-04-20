@@ -30,7 +30,8 @@ public class ModelTest {
          BigInt expected = new BigInt("64");
         */
          //assertEquals(expected.toString(),model.getleftPRange().toString());
-         assertEquals(new BigInt("109"), new BigInt("110").sub(new BigInt("1")));
+         System.out.println("ModelTest.test1LeftPVariableRange( ) " + new BigInt("110").sub(new BigInt("1")).toString());
+         assertEquals(new BigInt("109").toString(), new BigInt("110").sub(new BigInt("1")).toString());
          
      }
 }
