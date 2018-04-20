@@ -87,19 +87,15 @@ public class Model {
         for(int i=0; i<this.accuracyMilerTest; i++){
             System.out.println("Zaczynamy petle " );
             
-           do{     
-                         
-
-                randomDigit =randomDigit(x) ;
-                breakResult = a_pow_d_mod_n(randomDigit,x);
-                  System.out.println("radnom " + randomDigit + " " + breakResult );
-             }while(breakResult.equals(one) || breakResult.equals(x.sub(one)));
+           do{
+              randomDigit =randomDigit(x) ;
+             }while((randomDigit.pow(this.d)).div(x,true).equals(one));
                    
                    
           System.out.println("Random digit " + randomDigit);
           System.out.println("d " + d);
           System.out.println("x " + x);
-
+           boolean flag = false ; 
           BigInt r = new BigInt("0");
           do{
               /*breakResult = (breakResult.pow(two)).div(x, true);
@@ -108,14 +104,18 @@ public class Model {
               r = r.add(temp);
               */
               
-                if((randomDigit.pow(this.d.mul(two.pow(r)))).equals(x.sub(one)))
-                    return false;
+                if((randomDigit.pow(this.d.mul(two.pow(r)))).equals(x.sub(one))){
+                    flag = true;
+                     r = r.add(one);
+                    break;
+                }
              
-                       r = r.add(temp);
-                System.out.println("Model.Model.testMileraRabina()" + r.toString()+ "\\n");
-                                System.out.println();
-
-            } while (r.isSmmaler(maxPow2.sub(one)));
+                r = r.add(one);
+            
+            } while (r.isSmmaler(maxPow2));
+          
+          if ( flag == false)
+              return false;
 //while (r.isSmmaler(maxPow2) && breakResult.notequals(x.sub(one)));
           }
               
