@@ -3,6 +3,8 @@ package Model;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
@@ -302,30 +304,36 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
     }
 
 //******************************************************************************
- public void encode(byte[] var){
+ public void encode(byte[] var) {
      BigInt varLengthnew = new BigInt(Integer.toString(var.length));
      BigInt one = new BigInt("1");
      BigInt eight = new BigInt("8");
+     BigInt two = new BigInt("2");
      BigInt message;
-     
 
-     byte[] var2  = new byte[var.length*((var.length/8)/Integer.parseInt(this.HowManyBytes.toString()))];// dlugosc tablicy do zakodowania nowego tekstu 
-     byte [] bytesWithAddedbyte = new byte[Integer.parseInt(this.HowManyBytesWithRepeatedBytes.toString())*8];
-    
-     for (BigInt i = new BigInt("0"); i.isSmmaler(varLengthnew.div(this.HowManyBytes,false)); i=i.add(one)){
-         if(varLengthnew.isSmmaler(this.HowManyBytes.mul(eight))){
-            for(int z=0; z<bytesWithAddedbyte.length; z++)                
-                 bytesWithAddedbyte[z] = var[z % var.length]; // przekopiowana tablcia 
-            
-            message = new BigInt(Integer.toString(Integer.parseInt(bytesWithAddedbyte.toString()))); // nasza cyfra m
+     StringBuilder coded = new StringBuilder();
+      byte [] result = new byte[var.length*2];
+      
+      for(BigInt i=new BigInt("0"); i.isSmmaler(varLengthnew); i=i.add(one)){
+          
+          String s1 =  Integer.toString(var[Integer.parseInt(i.toString())]);
+          String s2 =  Integer.toString(159);
+          StringBuilder value = new StringBuilder();
+          value.append(s1); 
+          value.append(s2);
+
+            message =new BigInt(value.toString());
+            System.out.println("WIADOMOSC 1 czesc " + message.toString());
+            coded.append(
+                   (message.pow(two)).div(this.publickey,true).toString());
+            coded.append(" ");
+      }
             this.encodedText = 
-                message.div(this.publickey,true).toString().getBytes();
-             
-         }
-         
-     }
-         
+                coded.toString().getBytes();
+                         System.out.println("");
  }
+        
+         
     
 
 //******************************************************************************

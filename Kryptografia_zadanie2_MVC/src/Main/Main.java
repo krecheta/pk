@@ -9,6 +9,7 @@ import Controller.Controller;
 import Model.BigInt;
 import View.View;
 import Model.Model;
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -20,7 +21,7 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         // TODO code application logic here
         BigInt number_of_chars = new BigInt("1");
         int accuracyMilerTest =20;
@@ -29,7 +30,8 @@ public class Main {
         View view = new View();
         Controller controller = new Controller(view, model);
         view.setVisible(true);
-        
+       // model.choose_P_AND_Q();
+        //model.encode("a".getBytes());
       
          
         

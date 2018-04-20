@@ -12,6 +12,7 @@ public class BigInt {
 		
 		for(int i = 0; i< values.length; i++) {
 			values[i] = Character.getNumericValue(val.charAt(i));
+                        System.out.println("Model.BigInt.<init>() " + values[i] + " " +  val.charAt(i)  );
 		}
 	}
         
