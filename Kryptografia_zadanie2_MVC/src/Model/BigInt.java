@@ -65,7 +65,8 @@ public class BigInt {
                     return result;
                 }
                 else{
-                    result = other.sub(this);
+                    BigInt other2 = new BigInt(this.toString(),!this.sign);
+                    result = other.sub(other2);
                     result.setSign(other.getSign());
                     return result;
                 }

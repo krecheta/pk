@@ -33,7 +33,7 @@ public class Model {
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
         this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
-               this.leftPRange = new BigInt("100");
+               this.leftPRange = new BigInt("200");
 
     }
     
@@ -319,7 +319,7 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
       for(BigInt i=new BigInt("0"); i.isSmmaler(varLengthnew); i=i.add(one)){
           
          String s1 =  Integer.toString(var[Integer.parseInt(i.toString())]);
-          String s2 =  Integer.toString(0);
+          String s2 =  Integer.toString(15);
           StringBuilder value = new StringBuilder();
           value.append(s1); 
           value.append(s2);
@@ -374,7 +374,11 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
      System.out.println("WYNICZEK S1 oraz s2" + s11  + " " + s22 );
      
 
-     r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
+     r1 = ((this.yp.mul(this.p).
+             mul(mq)).
+             add(this.yq.mul(this.q).
+                     mul(mp))).
+             div(this.publickey,true);
      r2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
      s1 =((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
      s2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
@@ -391,8 +395,10 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
      System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
        System.out.println("publicKey " + this.publickey.toString()); 
           System.out.println("WYNICZEK S1 oraz s2" + this.yp.mul(this.p).mul(mq).toString()  + " " + (this.yq.mul(this.q).mul(mp)).toString());
+if (r1.toString().substring(r1.toString().length()-4,r1.toString().length()-1).contains("15"))
+         System.out.println("huraaa)" + r1.toString().substring(r1.toString().length()-3,r1.toString().length()));
+              System.out.println("huraaa)" + r1.toString().substring(r1.toString().length()-3,r1.toString().length()));
 
-     
  }
  
  

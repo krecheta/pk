@@ -410,8 +410,8 @@ public class ModelTest {
                     }
         }*/
         
-        BigInt wynik =new BigInt(Integer.toString(2),false).div(new BigInt(Integer.toString(5)),true);
-          assertEquals("3",wynik.toString());     
+        BigInt wynik =new BigInt(Integer.toString(3799)).mul(new BigInt(Integer.toString(94)));
+          assertEquals("357106",wynik.toString());     
               assertEquals(true,wynik.getSign());          
     }
     
