@@ -71,7 +71,6 @@ public class Model {
            else
                 flag = false;
        }
-       System.out.println("Model.Model.maxPowerOfTwo()" +counter.sub(temp).toString() );
        return counter.sub(temp); // return s
        
    }
@@ -83,9 +82,6 @@ public class Model {
 
 //******************************************************************************
     public boolean testMileraRabina(BigInt p){
-        System.out.println("");
-        System.out.println("Model.Model.aaaaaaaaaaaaaaaa()");
-
         BigInt temp = new BigInt("1");
         BigInt two = new BigInt("2");
         BigInt one = new BigInt("1");
@@ -96,84 +92,59 @@ public class Model {
         if (isEven(p))
             return false;
 // Obliczamy Maksymalną potęgę 2 dzieląc x-1
-                    System.out.println("p -1 " + p.sub(one));
-
         BigInt s = maxPowerOfTwo(p.sub(one));
-                  System.out.println("s " + s);
 
 // Obliczamy wartosć d = 
         this.d = p.div(new BigInt("2").pow(s), false);
         
-              boolean flag = true;
+        boolean flag = true;
         for(int i=0; i<this.accuracyMilerTest; i++){
-            System.out.println("Zaczynamy petle " );
-                    System.out.println("d " + d);
-                    System.out.println("p " + p);
-                    System.out.println("");
-
-
-           
-                         
-
                 randomDigit =randomDigit(two,p.sub(two)) ;
                 x = a_pow_d_mod_n(randomDigit,p);
-                System.out.println("radnom " + randomDigit );
-                System.out.println("x 1 " + x);
-                
                 if( x.equals(one) || x.equals(p.sub(one)))
                     continue;
                 
-                for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j=j.add(one)){
-                    System.out.println("JJJJJ " + j);
-                    x = (x.pow(two)).div(p,true);
-                    if (x.equals(one)){
-                        flag = false;
-                        System.out.println("WYCHODZIMY 1");
+            for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j=j.add(one)){
+                x = (x.pow(two)).div(p,true);
+                if (x.equals(one)){
+                    flag = false;
                         break;
                     }
                 }
                 if(!flag)
                     break;
                 if(x.notequals(p.sub(one))){
-                                            System.out.println("WYCHODZIMY 2");
                     flag = false;
                     break;
                 }
         }
-        return flag;    
+     return flag;    
     }
     
 //******************************************************************************
     public void choose_P_AND_Q(){
-    
-         BigInt one = new BigInt("1");
+        BigInt one = new BigInt("1");
         BigInt two = new BigInt("2");
         BigInt three = new BigInt("3");
         BigInt four = new BigInt("4");
 
-this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(two, false)));
-        //random P digit
-       while(!(!this.p.div(four,true).notequals(three) && testMileraRabina(this.p))){
-           this.p=this.p.add(one);
-         
-       }
+        this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(two, false)));
+        while(!(!this.p.div(four,true).notequals(three) && testMileraRabina(this.p))){
+           this.p=this.p.add(one); 
+        }
        
-  this.q = randomDigit(this.leftQRange, this.leftQRange.add(this.leftQRange.div(two, false)));
-      while(!(!this.q.div(four,true).notequals(three) && testMileraRabina(this.q))){
+        this.q = randomDigit(this.leftQRange, this.leftQRange.add(this.leftQRange.div(two, false)));
+        while(!(!this.q.div(four,true).notequals(three) && testMileraRabina(this.q))){
           this.q=this.q.add(one);
-          
-     }
-       
-       
-        this.publickey = this.p.mul(this.q);
+        }
+     this.publickey = this.p.mul(this.q);
     }
     
     
 //******************************************************************************
     public BigInt randomDigit(BigInt left, BigInt right){
-        System.out.println("XXXX " + left.toString() + " " + right.toString());
      String valueLeftAsString = left.toString();
-      String valueRightAsString = right.toString();
+     String valueRightAsString = right.toString();
      int valueLeftLength = valueLeftAsString.length();
      int valueRightLength = valueRightAsString.length();
      StringBuilder value = new StringBuilder();
@@ -183,16 +154,14 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
 
      int range = rand.nextInt(valueRightLength - valueLeftLength +1)+(valueLeftLength);
      int[] result = new int[range];
-        System.out.println("RANGE  " + range);
 
      //Jezeli wylosowany zakres jest mniejszy of cyfry 
      if(range < valueRightLength && range > valueLeftLength){
         
         for (int i=0; i<range; i++ ){
-            
             if(i==0){
                 result[i] = rand.nextInt(9)+1;
-                System.out.println("ModelCZEMU TU JESTEM "  + result[i]);}
+            }
             else
                 result[i] = rand.nextInt(10);
         }
@@ -201,11 +170,9 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
      else if(range < valueRightLength && range == valueLeftLength){
          
          for (int i=0; i<range; i++ ){
-                  ndigit = valueLeftAsString.substring(i, i+1);
-
+             ndigit = valueLeftAsString.substring(i, i+1);
              if(i==0)
                  result[i]=rand.nextInt(10 - Integer.parseInt(ndigit))+Integer.parseInt(ndigit);
-             
              else
                  result[i] = rand.nextInt(10);
      
@@ -216,13 +183,12 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
          boolean flag = false;
          for (int i=0; i<range; i++ ){
                   ndigit = valueRightAsString.substring(i, i+1);
-
              if(i==0){
                  result[i]=rand.nextInt(Integer.parseInt(ndigit))+1;
              }
              else{
-                    if (!flag){
-                     for(int z=0; z<i; z++){
+                  if (!flag){
+                    for(int z=0; z<i; z++){
                         if (Integer.parseInt(valueRightAsString.substring(z, z+1)) > result[z] )
                             flag=true;
                        }
@@ -244,25 +210,19 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
                   lndigit = rndigit - lndigit;
                   rndigit -= lndigit;
               }
-                  
-              System.out.println("Model.Model.randomDigit()       " +rndigit + "    " + lndigit );
               result[z] = rand.nextInt(rndigit - lndigit +1 )+ lndigit;
           
           }
-     
-     
      for (int t=0; t<range; t++)
           value.append(result[t]);
-        System.out.println("WYLOSOWANO " + value.toString());
     return new BigInt(value.toString());
-          
   }
 
 //******************************************************************************
 //**************************    
    private byte[] plainText;
    private byte[] encodedText;
-   private byte[] decodedText;
+   private String decodedText;
    private byte[] key;
    private byte[] plainText2;
    
@@ -326,7 +286,7 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
           value.append(this.AddedWord);
 
             message =new BigInt(value.toString());
-            System.out.println("WIADOMOSC 1 czesc " + message.toString());
+            System.out.println("WIADOMOSC  czesc " + message.toString());
             coded.append(
                    (message.pow(two)).div(this.publickey,true).toString());
            
@@ -334,61 +294,53 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
       }
             this.encodedText = 
                 coded.toString().getBytes();
-                         System.out.println("encodedText");
-                                     //System.out.println("WIADOMOSC 1 czesc " + message.toString());
-
  }
  
  
  
  
  public void decode(String codedText){
-    this.m=new BigInt("0");
-    this.mp=new BigInt("0");
-    this.r=new BigInt("0");
-    this.rp=new BigInt("1");
-    this.nwdw=new BigInt("0");
-    this.zero = new BigInt("0");
+   
+    
+    BigInt coded, mp, mq, r1, r2, s1, s2;
+    BigInt one = new BigInt("1");
+    BigInt four = new BigInt("4");
+    String[] splited = codedText.split("\\s+");
+    StringBuilder ResultOfDecode = new StringBuilder();
+    
   
-     BigInt coded = new BigInt(codedText);
-     BigInt one = new BigInt("1");
-      BigInt four = new BigInt("4");
-     BigInt mp,mq,r1,r2,s1,s2;
-     System.out.println("klucze " + this.p +  " "+ this.q);
-     System.out.println("codedtext " + coded.toString() +  " "+ codedText);
-     System.out.println("div(four, false) " + this.p.add(one).div(four, false).toString());
 
-
-     mp = ((coded.pow((this.p.add(one)).div(four, false))).div(this.p,true));
-     mq = ((coded.pow((this.q.add(one)).div(four, false))).div(this.q,true));
-     System.out.println("klucze2 " + this.p +  " "+ this.q);
-     
-     extendedAlghoritmEuklidesa(this.p , this.q);
-           
-     
-     String s11 = this.yp.toString();
+    resetValues(); // zerujemy wartosci dla Rozszerzonego algorytmu euklidesaa
+    extendedAlghoritmEuklidesa(this.p , this.q);
+    
+    String s11 = this.yp.toString();
     String s22 = this.yq.toString();
     if (!this.yp.getSign())
         s11 = "-"+s11;
-     if (!this.yq.getSign())
+    if (!this.yq.getSign())
         s22 = "-"+s22;
-     System.out.println("WYNICZEK S1 oraz s2" + s11  + " " + s22 );
-     
 
-     r1 = ((this.yp.mul(this.p).
-             mul(mq)).
-             add(this.yq.mul(this.q).
-                     mul(mp))).
-             div(this.publickey,true);
+    for (int i =0; i<splited.length;i++){
+      coded = new BigInt(splited[i]);
+      System.out.println("odszyfrujemy liczbe " + splited[i]); 
+     
+    //Obliczamy mp oraz mq dla naszej zaszyfrowanje wiadomosci 
+     mp = ((coded.pow((this.p.add(one)).div(four, false))).div(this.p,true));
+     mq = ((coded.pow((this.q.add(one)).div(four, false))).div(this.q,true));
+   
+   //Olbliczamy nasze pierwiastki dla naszej wiadomosci 
+     r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
      r2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
      s1 =((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
      s2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
      
+   
       System.out.println("mp " + mp.toString()); 
-       System.out.println("mq " + mq.toString()); 
-            System.out.println("this.yq " + this.yq.toString()); 
-       System.out.println("this.yp " + this.yp.toString());
-       
+      System.out.println("mq " + mq.toString()); 
+      System.out.println("Wyniki Yp oraz Yq " + s11  + " " + s22 );
+      System.out.println("Znalezione pierwiastki to: " + r1.toString() + " " + 
+                 r2.toString() + " " + s1.toString() + " " + s2.toString()  + " " );
+
        
      //System.out.println("PEIRWIASTKIIII " + r1.toString()+ "  p1 "+ (this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp)).toString()); 
     // System.out.println("PEIRWIASTKIIII " + r2.toString() + "  p2 " +(((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()) ; 
@@ -396,18 +348,19 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
      //System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
 
      if (r1.toString().substring(r1.toString().length() - this.AddedWord.length(), r1.toString().length() ).contains(this.AddedWord))
-         this.decodedText = r1.toString().getBytes();
+         ResultOfDecode.append(r1.toString()).append(" ");
      else if (r2.toString().substring(r2.toString().length() - this.AddedWord.length() ,r2.toString().length()).contains(this.AddedWord))
-        this.decodedText = r2.toString().getBytes();
+         ResultOfDecode.append(r2.toString()).append(" ");
      else if (s1.toString().substring(s1.toString().length() - this.AddedWord.length(), s1.toString().length()).contains(this.AddedWord))
-        this.decodedText = s1.toString().getBytes();
+         ResultOfDecode.append(s1.toString()).append(" ");
      else if(s2.toString().substring(s2.toString().length()- this.AddedWord.length(), s2.toString().length()).contains(this.AddedWord))
-        this.decodedText = s2.toString().getBytes(); 
+         ResultOfDecode.append(s2.toString()).append(" ");
      else
-         System.out.println("Nie znaleziono pierwiastka. Znalezione pierwiastki to: " + r1.toString() + "\n" + 
-                 r2.toString() + "\n" + s1.toString() + "\n" + s2.toString()  + " " +r1.toString().substring(r1.toString().length() - this.AddedWord.length(), r1.toString().length() - 1));
+       ;  //System.out.println("Nie znaleziono pierwiastka. Znalezione pierwiastki to: " + r1.toString() + " " + 
+           //      r2.toString() + " " + s1.toString() + " " + s2.toString() );
+    }
+   this.decodedText = ResultOfDecode.toString();
  }
- 
  
  private BigInt m=new BigInt("0");
  private BigInt mp=new BigInt("0");
@@ -426,26 +379,23 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
     }
     else
         extendedAlghoritmEuklidesa(b,a.div(b,true));
-
     BigInt t=this.mp;
-     System.out.println("mp " + this.mp + " rp " + this.rp + " a " +  a + " b " + b + " mp " + mp);
-     this.mp=(this.rp.sub((a.div(b,false)).mul( this.mp)));
-    System.out.println("MP  "+  this.mp.toString() +"  this.rp.sub(a.div(b,false)))"+this.rp.sub(a.div(b,false))+" " +a.div(b,false).toString() );
-    
-           System.out.println("xxxx" + this.m.toString());
-
-     this.m=b;
-      System.out.println("xxxx" + this.m.toString());
- 
-     this.rp=t;
-     this.r=a;
-
-
-    System.out.println("przed konwersja an biginta "+ mp+ " * "+ m+ " + "+ rp+ " * "+r);
+    this.mp=(this.rp.sub((a.div(b,false)).mul( this.mp)));
+    this.m=b;
+    this.rp=t;
+    this.r=a;
     this.yp = this.rp;
     this.yq =  this.mp;
-    
  }
+ 
+    private void resetValues(){
+    this.m=new BigInt("0");
+    this.mp=new BigInt("0");
+    this.r=new BigInt("0");
+    this.rp=new BigInt("1");
+    this.nwdw=new BigInt("0");
+    this.zero = new BigInt("0");
+    }
          
     
 
@@ -507,7 +457,7 @@ public BigInt getleftPRange() {
         return this.q;
     }
 
-   public byte[] getDecodedText(){
+   public String getDecodedText(){
     return this.decodedText;
     }
 }

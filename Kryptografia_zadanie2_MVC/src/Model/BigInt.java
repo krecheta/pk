@@ -257,7 +257,6 @@ public class BigInt {
                 String val1 = this.toString();
 		String val2 = other.toString();
                 if(modulo)
-                System.out.println("Model.BigInt.div()MODULO " );
                 if (modulo && (!this.getSign()))
                     return moduloFromNegativeNumber(this, other);
 		
@@ -476,14 +475,9 @@ public class BigInt {
 	}
 
         public BigInt moduloFromNegativeNumber(BigInt a, BigInt b){
-            
-                    
-            return a.sub((a.div(b,false)).
-                    sub(new BigInt("1")).
-                    mul(b));
+            return a.sub((a.div(b,false)).sub(new BigInt("1")).mul(b));
         }
    public boolean equals(BigInt x){
-       System.out.println("Model.BigInt.equals() porownanie " + this.toString() + " " +  x.toString() + " " +this.toString().equals(x.toString()));
        return this.toString().equals(x.toString());
    }
    public boolean notequals(BigInt x){
