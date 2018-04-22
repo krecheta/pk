@@ -27,15 +27,18 @@ public class Main {
         int accuracyMilerTest =20;
      
         Model model = new Model(number_of_chars, accuracyMilerTest);
-        View view = new View();
+       View view = new View();
         Controller controller = new Controller(view, model);
         view.setVisible(true);
-       // model.choose_P_AND_Q();
+     /* ///  model.choose_P_AND_Q();
         //model.encode("a".getBytes());
       
-         
-        
-         
+        model.choose_P_AND_Q();
+              System.out.println("zaczynamy 1\n ");
+
+       model.extendedAlghoritmEuklidesa(model.getP(), model.getQ());
+      // model.decode(model.getEncodedText().toString());
+      */  
     
 
 

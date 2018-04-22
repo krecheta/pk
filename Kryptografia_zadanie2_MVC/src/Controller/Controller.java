@@ -43,6 +43,8 @@ public class Controller {
           for(int i=0; i<plaintTextInBytes.length; i++)
             System.out.println("Controller wypluwa () "+ plaintTextInBytes[i]);
            model.encode(plaintTextInBytes); // szyfruje nasz tekst 
+                       System.out.println("JEDZIEMY Z KOKSEM ) "+ new String (model.getEncodedText()));
+
             byte[] encrypted = model.getEncodedText();
             view.setEncodedText(new String(encrypted));
         }
@@ -52,9 +54,10 @@ public class Controller {
     class DecryptedListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
-          //  model.xorData(model.getEncodedText(),model.getKey(), 1);
+            System.out.println("JEDZIEMY Z KOKSEM2 ) "+ new String (model.getEncodedText()));
+            model.decode(new String (model.getEncodedText()));
             byte[] decrypted = model.getPlainText2();
-            view.setPlainText2(new String(decrypted));
+            //view.setPlainText2(new String(decrypted));
             }
     }
     class GenerateKey implements ActionListener{
@@ -187,7 +190,7 @@ public class Controller {
             }
         }
     }
-
+   
     class CloseWindowListener implements ActionListener{
        private final JFrame jframe;
        

@@ -20,15 +20,7 @@ import sun.nio.cs.ext.Big5;
  * @author edodomi
  */
 public class ModelTest {
-@org.junit.Test
-    public void generateKey(){
-         BigInt number_of_chars = new BigInt("2");
-         BigInt blockSize = new BigInt("4");
-         int accuracyMilerTest =3;
-         Model model = new Model(number_of_chars, blockSize, accuracyMilerTest);
-         BigInt expected = new BigInt("64");  
-    }
-        
+
     
     
     /*
@@ -129,7 +121,7 @@ public class ModelTest {
         assertEquals(true, new BigInt("5223").isBigger(new BigInt("643")));
         assertEquals(true, new BigInt("59999").isBigger(new BigInt("6002")));
     }    
-   */
+   
     @org.junit.Test
    public void testMilerRabinFunction(){
     BigInt number_of_chars = new BigInt("21");
@@ -187,7 +179,6 @@ public class ModelTest {
       
    }
     assertEquals(true, flag);
-}*/} }
     /*
    @org.junit.Test
     public void addtestAplusB(){
@@ -321,9 +312,110 @@ public class ModelTest {
                     }
         }
               assertEquals(true,flag);
- */
 
+    
+    
+    @org.junit.Test
+    public void dodawanie1Test(){
+         // test liczba dodatnia + liczba dodatnia 
+        boolean flag = true; 
+        BigInt wynik;
+        for(int x=1; x<1000; x++){
+            for(int y=1; y<1000; y++){
+                wynik = new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(y)));
+                if (!((Integer.toString(x+y)).equals(wynik.toString())  || !wynik.getSign()==true)){
+                    System.out.println("ModelTest.mod() " + x + " mod " + y);
+                    flag =false;
+                    System.out.println("ModelTest.mod() expected " + x+y + " gives " + new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(x))).toString()  );
+                    assertEquals(true,flag);
+                            }
+                    }
+        }
+              assertEquals(true,flag);          
+    }
 
+    @org.junit.Test
+    public void dodawanie2Test(){
+         // test liczba dodatnia + liczba ujemna 
+        boolean flag = true; 
+        BigInt wynik;
+        for(int x=1; x<1000; x++){
+            for(int y=2; y<1000; y++){
+                wynik = new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(y),false));
+                if (!((Integer.toString(y-x)).equals(wynik.toString())  || !wynik.getSign()==false)){
+                    System.out.println("ModelTest.mod() " + x + " + " + y);
+                    flag =false;
+                    System.out.println("ModelTest.mod() expected " + (x-y) + " gives " + new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(y),false)).toString()  );
+                    assertEquals(true,flag);
+                            }
+                    }
+        }
+              //assertEquals(new BigInt("1").toString(),new BigInt("1").add(new BigInt("2",false)).toString());          
+    }
+
+   @org.junit.Test
+    
+    public void dodawanie3Test(){
+         // test liczba ujemna + liczba ujemna 
+        boolean flag = true; 
+        BigInt wynik;
+        for(int x=1; x<1000; x++){
+            for(int y=1; y<1000; y++){
+                wynik = new BigInt(Integer.toString(x),false).add(new BigInt(Integer.toString(y),false));
+                if (!((Integer.toString(x+y)).equals(wynik.toString())  || !wynik.getSign()==false)){
+                    System.out.println("ModelTest.mod() " + x + " mod " + y);
+                    flag =false;
+                    System.out.println("ModelTest.mod() expected " + x+y + " gives " + new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(x))).toString()  );
+                    assertEquals(true,flag);
+                            }
+                    }
+        }
+              assertEquals(true,flag);          
+    }
+    
+       @org.junit.Test
+    public void dodawanie4Test(){
+         // test liczba ujemna + liczba dodatnia 
+        boolean flag = true; 
+        BigInt wynik;
+        for(int x=1; x<1000; x++){
+            for(int y=1; y<1000; y++){
+                wynik = new BigInt(Integer.toString(x),false).add(new BigInt(Integer.toString(y)));
+                if (!((Integer.toString(x+y)).equals(wynik.toString())  || !wynik.getSign()==false)){
+                    System.out.println("ModelTest.mod() " + x + " mod " + y);
+                    flag =false;
+                    System.out.println("ModelTest.mod() expected " + x+y + " gives " + new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(x))).toString()  );
+                    assertEquals(true,flag);
+                            }
+                    }
+        }
+              assertEquals(true,flag);          
+    }
+    */
+    
+           @org.junit.Test
+    public void odejmowanie1(){
+         // test liczba dodatnia  -  liczba dodatnia 
+        /*boolean flag = true; 
+        BigInt wynik;
+        for(int x=1; x<1000; x++){
+            for(int y=1; y<1000; y++){
+                wynik = new BigInt(Integer.toString(x),false).add(new BigInt(Integer.toString(y)));
+                if (!((Integer.toString(x-y)).equals(wynik.toString())  || !wynik.getSign()==false)){
+                    System.out.println("ModelTest.mod() " + x + " mod " + y);
+                    flag =false;
+                    System.out.println("ModelTest.mod() expected " + x+y + " gives " + new BigInt(Integer.toString(x)).add(new BigInt(Integer.toString(x))).toString()  );
+                    assertEquals(true,flag);
+                            }
+                    }
+        }*/
+        
+        BigInt wynik =new BigInt(Integer.toString(2),false).div(new BigInt(Integer.toString(5)),true);
+          assertEquals("3",wynik.toString());     
+              assertEquals(true,wynik.getSign());          
+    }
+    
+}
     
    
 

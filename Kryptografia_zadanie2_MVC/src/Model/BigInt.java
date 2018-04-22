@@ -6,16 +6,24 @@ import java.util.List;
 
 public class BigInt {
 	final private int[] values;
+        private boolean sign; // true dodadni false ujemny 
 	
 	public BigInt(String val) {
-		values = new int[val.length()];
-		
+                this.sign = true; // domyslnie jest true
+		values = new int[val.length()];		
 		for(int i = 0; i< values.length; i++) {
 			values[i] = Character.getNumericValue(val.charAt(i));
-                        System.out.println("Model.BigInt.<init>() " + values[i] + " " +  val.charAt(i)  );
 		}
 	}
         
+        // mozemy tworzyc lcizbe odrazu ze znakiem 
+	public BigInt(String val, boolean sign) {
+                this.sign = sign; // domyslnie jest true
+		values = new int[val.length()];		
+		for(int i = 0; i< values.length; i++) {
+			values[i] = Character.getNumericValue(val.charAt(i));
+		}
+	}
 	
 	public int[] getValues() {
 		return values;
@@ -28,6 +36,41 @@ public class BigInt {
 	
 	//dodawanie
 	public BigInt add(BigInt other) {
+             boolean signValue;
+              BigInt result;
+            if((this.sign && other.getSign()) || (!this.sign && !other.getSign()))
+                 signValue = this.sign;
+           
+            else if(this.sign && !other.getSign() ){ // +-
+             if (this.isBigger(other)){
+                 BigInt other2 = new BigInt(other.toString(),!other.getSign());
+                 
+                 return this.sub(other2);
+             }
+               
+             else
+                 result = new BigInt(other.toString(),!other.getSign());
+                 BigInt other2 = new BigInt(this.toString(),!this.getSign());
+                 result = result.sub(other2);
+                 result.setSign(other.getSign());
+                 return result;
+               }
+            
+            else{//-+
+               if (this.isBigger(other)){ 
+                    result = new BigInt(this.toString(),!this.sign);
+                    BigInt other2 = new BigInt(other.toString());
+                    result = result.sub(other2);
+                    result.setSign(this.sign);
+                    return result;
+                }
+                else{
+                    result = other.sub(this);
+                    result.setSign(other.getSign());
+                    return result;
+                }
+            }
+                
 		int[] val1 = values;
 		int[] val2 = other.getValues();
 		
@@ -69,14 +112,59 @@ public class BigInt {
 		}
 		
 		//odwracamy stringa i zwracamy BigInt
-		return new BigInt(s.reverse().toString());
+		return new BigInt(s.reverse().toString(),signValue);
 	}
 	
 	//odejmowanie
 	public BigInt sub(BigInt other) {
-		int[] val1 = values;
-		int[] val2 = other.getValues();
-		
+            boolean signValue = this.sign;
+            boolean flag = false;
+            BigInt other2; 
+           
+            if(this.sign && other.getSign()){ // ++
+                if (this.isBigger(other))
+                  ;        
+                else{
+                    BigInt result = other.sub(this);
+                    result.setSign(false);
+                    return result;
+                }
+            }
+            else if(!this.sign && !other.getSign()){ //-- (-7 --5)
+                 if (this.isBigger(other)){
+                      other2 = new BigInt(other.toString());
+                      other2.setSign(!other.getSign());
+                      return this.add(other2);
+                 }
+                 else{
+                       other2 = new BigInt(other.toString());
+                      other2.setSign(!other.getSign());
+                      return other2.add(this);
+                }
+            }
+            else if (this.sign && !other.getSign()){ 
+                  
+                 other2 = new BigInt(other.toString());
+                 other2.setSign(!other.getSign());
+                  other2 = this.add(other2);
+                  return other2;
+                 }
+            else{ //-+ -1-5
+                 other2 = new BigInt(this.toString());
+                 other2.setSign(!this.getSign());
+                 BigInt result = other2.add(other);
+                 result.setSign(this.sign);
+                 return result;
+            }
+                int[] val1,val2;
+                if(flag){
+                     val2 = values;
+                     val1 = other.getValues();
+                }
+                else{
+                    val1 = values;
+                    val2 = other.getValues();
+                }
 		//zmienne pomocnicze
 		int sub = 0, carry = 0, dif = val1.length - val2.length;
 		StringBuilder s = new StringBuilder();
@@ -112,13 +200,13 @@ public class BigInt {
 			}
                         carry=0;
 		}
-		return new BigInt(cutZeros(s.reverse().toString()));
+		return new BigInt(cutZeros(s.reverse().toString()),signValue);
 	}
 	
 	//mno�enie
 	public BigInt mul(BigInt other) {
-
-		int[] val1 = values;
+                boolean signValue = checkSignForMulAndDivOperation(other);
+        	int[] val1 = values;
 		int[] val2 = other.getValues();
 		
 		if(val1.length == 1 && val1[0] == 0) {
@@ -159,15 +247,18 @@ public class BigInt {
         for(int i = 0; i < results.size(); i++) {
             product = new StringBuilder(add(results.get(i), product.toString()));
         }
-        
-        return new BigInt(product.toString());
+        return new BigInt(product.toString(),signValue);
 	}
 	
 	//dzielenie (je�eli modulo == true to zwracamy reszt� z dzielenia)
 	public BigInt div(BigInt other, boolean modulo) {
-            System.out.println("Model.BigInt.div() dzielenie " + this.toString() +" przez " + other.toString());
-		String val1 = this.toString();
+        	checkSignForMulAndDivOperation(other);
+                String val1 = this.toString();
 		String val2 = other.toString();
+                if(modulo)
+                System.out.println("Model.BigInt.div()MODULO " );
+                if (modulo && (!this.getSign()))
+                    return moduloFromNegativeNumber(this, other);
 		
 		if(!isSmallerOrEqual(val1, val2)) {
 			if(modulo) {
@@ -212,22 +303,23 @@ public class BigInt {
         if(modulo) {
             return new BigInt(remainder);
         }
-        return new BigInt(quotient.toString());
+        return new BigInt(quotient.toString(),sign);
 	}
 	
 	//potegowanie
 	public BigInt pow(BigInt other) {
-            System.out.println("Model.BigInt.pow()" + this.toString() + " do potegi "+ other.toString()  );
 		String val = this.toString();
 		String index = other.toString();
 		String result = "1";
-		
+		boolean sign = true;
+                if (!(other.div(new BigInt("2"),true).equals(new BigInt("0"))) &&(!this.sign))
+                    sign = false;
 		while(!index.equals("0")) {
 			result = mul(result, val);
 			index = sub(index, "1");
 		}
 		
-		return new BigInt(result);
+		return new BigInt(result,sign);
 	}
 	
 	//mno�enie dw�ch string�w (potrzebne do dzielenia dw�ch BigInt�w)
@@ -382,6 +474,13 @@ public class BigInt {
 		return false;
 	}
 
+        public BigInt moduloFromNegativeNumber(BigInt a, BigInt b){
+            
+                    
+            return a.sub((a.div(b,false)).
+                    sub(new BigInt("1")).
+                    mul(b));
+        }
    public boolean equals(BigInt x){
        System.out.println("Model.BigInt.equals() porownanie " + this.toString() + " " +  x.toString() + " " +this.toString().equals(x.toString()));
        return this.toString().equals(x.toString());
@@ -414,7 +513,24 @@ public class BigInt {
    }
    
     public boolean isBigger(BigInt x){
-        return !isSmmaler(x);
+        return !isSmmaler(x);    
+    }
+    
+   public boolean getSign(){
+       return this.sign;
+   }
+   
+   private void  setSign(boolean sign){
+       this.sign = sign;
+   }
+   
+    private boolean checkSignForMulAndDivOperation( BigInt b){
+        if(this.sign && b.getSign())
+            return this.sign;
+        else if(!this.sign && !b.getSign())// jezeli ten znak jest ujemny 
+            return true;
+        else
+            return false;
     }
 
 
