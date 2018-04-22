@@ -27,6 +27,8 @@ public class Model {
    
     public BigInt yp = new BigInt("0");
     public BigInt yq = new BigInt("0");
+    final private String AddedWord ="15" ;
+    final private int AddedWordLength = this.AddedWord.length();
 
 
     
@@ -318,18 +320,17 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
       
       for(BigInt i=new BigInt("0"); i.isSmmaler(varLengthnew); i=i.add(one)){
           
-         String s1 =  Integer.toString(var[Integer.parseInt(i.toString())]);
-          String s2 =  Integer.toString(15);
+          String s1 =  Integer.toString(var[Integer.parseInt(i.toString())]);
           StringBuilder value = new StringBuilder();
           value.append(s1); 
-          value.append(s2);
+          value.append(this.AddedWord);
 
             message =new BigInt(value.toString());
             System.out.println("WIADOMOSC 1 czesc " + message.toString());
             coded.append(
                    (message.pow(two)).div(this.publickey,true).toString());
            
-            //coded.append(" ");
+            coded.append(" "); //kazdy blok oddzielamy spacja
       }
             this.encodedText = 
                 coded.toString().getBytes();
@@ -389,16 +390,22 @@ this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(tw
        System.out.println("this.yp " + this.yp.toString());
        
        
-     System.out.println("PEIRWIASTKIIII " + r1.toString()+ "  p1 "+ (this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp)).toString()); 
-     System.out.println("PEIRWIASTKIIII " + r2.toString() + "  p2 " +(((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()) ; 
-     System.out.println("PEIRWIASTKIIII " + s1.toString()+ "  p3 "+ ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()); 
-     System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
-       System.out.println("publicKey " + this.publickey.toString()); 
-          System.out.println("WYNICZEK S1 oraz s2" + this.yp.mul(this.p).mul(mq).toString()  + " " + (this.yq.mul(this.q).mul(mp)).toString());
-if (r1.toString().substring(r1.toString().length()-4,r1.toString().length()-1).contains("15"))
-         System.out.println("huraaa)" + r1.toString().substring(r1.toString().length()-3,r1.toString().length()));
-              System.out.println("huraaa)" + r1.toString().substring(r1.toString().length()-3,r1.toString().length()));
+     //System.out.println("PEIRWIASTKIIII " + r1.toString()+ "  p1 "+ (this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp)).toString()); 
+    // System.out.println("PEIRWIASTKIIII " + r2.toString() + "  p2 " +(((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()) ; 
+     //System.out.println("PEIRWIASTKIIII " + s1.toString()+ "  p3 "+ ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()); 
+     //System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
 
+     if (r1.toString().substring(r1.toString().length() - this.AddedWord.length(), r1.toString().length() ).contains(this.AddedWord))
+         this.decodedText = r1.toString().getBytes();
+     else if (r2.toString().substring(r2.toString().length() - this.AddedWord.length() ,r2.toString().length()).contains(this.AddedWord))
+        this.decodedText = r2.toString().getBytes();
+     else if (s1.toString().substring(s1.toString().length() - this.AddedWord.length(), s1.toString().length()).contains(this.AddedWord))
+        this.decodedText = s1.toString().getBytes();
+     else if(s2.toString().substring(s2.toString().length()- this.AddedWord.length(), s2.toString().length()).contains(this.AddedWord))
+        this.decodedText = s2.toString().getBytes(); 
+     else
+         System.out.println("Nie znaleziono pierwiastka. Znalezione pierwiastki to: " + r1.toString() + "\n" + 
+                 r2.toString() + "\n" + s1.toString() + "\n" + s2.toString()  + " " +r1.toString().substring(r1.toString().length() - this.AddedWord.length(), r1.toString().length() - 1));
  }
  
  
@@ -499,8 +506,11 @@ public BigInt getleftPRange() {
     public BigInt getQ() {
         return this.q;
     }
-}
 
+   public byte[] getDecodedText(){
+    return this.decodedText;
+    }
+}
 
 /*
 Zakres wybieramy tak: mamy x1 oraz x2 gdzie x1 oznacza ilosc bitow ile bedziemy 

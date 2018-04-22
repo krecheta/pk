@@ -56,8 +56,8 @@ public class Controller {
         public void actionPerformed(ActionEvent e){
             System.out.println("JEDZIEMY Z KOKSEM2 ) "+ new String (model.getEncodedText()));
             model.decode(new String (model.getEncodedText()));
-            byte[] decrypted = model.getPlainText2();
-            //view.setPlainText2(new String(decrypted));
+            byte[] decrypted = model.getDecodedText();
+            view.setPlainText2(new String(decrypted));
             }
     }
     class GenerateKey implements ActionListener{
