@@ -1,5 +1,6 @@
 package Model;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -222,7 +224,7 @@ public class Model {
 //**************************    
    private byte[] plainText;
    private byte[] encodedText;
-   private String decodedText;
+   private byte[] decodedText;
    private byte[] key;
    private byte[] plainText2;
    
@@ -269,57 +271,49 @@ public class Model {
 
 //******************************************************************************
  public void encode(byte[] var) {
-     BigInt varLengthnew = new BigInt(Integer.toString(var.length));
-     BigInt one = new BigInt("1");
-     BigInt eight = new BigInt("8");
-     BigInt two = new BigInt("2");
      BigInt message;
-
+     String ReturnedString;
+     BigInt two = new BigInt("2");
+     StringBuilder partOfMessage;
      StringBuilder coded = new StringBuilder();
-      byte [] result = new byte[var.length*2];
+     
+     //ustawiamy rozmiar tablicy na nowa wartosc 
+      byte [] result = new byte[1+this.AddedWordLength];
       
-      for(BigInt i=new BigInt("0"); i.isSmmaler(varLengthnew); i=i.add(one)){
-          
-          String s1 =  Integer.toString(var[Integer.parseInt(i.toString())]);
-          StringBuilder value = new StringBuilder();
-          value.append(s1); 
-          value.append(this.AddedWord);
-
-            message =new BigInt(value.toString());
-            System.out.println("WIADOMOSC  czesc " + message.toString());
+      for(int i=0; i<var.length; i++){
+            partOfMessage = new StringBuilder();
+            partOfMessage.append(Integer.toString((int)var[i])); // bierzemy 1 bajt i go kodujemy 
+            partOfMessage.append(this.AddedWord); //dodajemy do niego naszą dodatkową wiadomosc 
+            message =new BigInt(partOfMessage.toString());
             coded.append(
                    (message.pow(two)).div(this.publickey,true).toString());
            
             coded.append(" "); //kazdy blok oddzielamy spacja
-      }
+        }
             this.encodedText = 
                 coded.toString().getBytes();
  }
- 
- 
- 
- 
+
  public void decode(String codedText){
-   
-    
-    BigInt coded, mp, mq, r1, r2, s1, s2;
+    BigInt coded, mp, mq;
+    String r1, r2, s1, s2;
     BigInt one = new BigInt("1");
     BigInt four = new BigInt("4");
     String[] splited = codedText.split("\\s+");
-    StringBuilder ResultOfDecode = new StringBuilder();
+    byte[] ResultOfDecode  = "x".getBytes();
     
-  
-
     resetValues(); // zerujemy wartosci dla Rozszerzonego algorytmu euklidesaa
     extendedAlghoritmEuklidesa(this.p , this.q);
-    
     String s11 = this.yp.toString();
     String s22 = this.yq.toString();
-    if (!this.yp.getSign())
+     if (!this.yp.getSign())
         s11 = "-"+s11;
-    if (!this.yq.getSign())
+     if (!this.yq.getSign())
         s22 = "-"+s22;
+    
 
+    byte[] tableOfBytes = new byte [splited.length];
+    
     for (int i =0; i<splited.length;i++){
       coded = new BigInt(splited[i]);
       System.out.println("odszyfrujemy liczbe " + splited[i]); 
@@ -329,41 +323,46 @@ public class Model {
      mq = ((coded.pow((this.q.add(one)).div(four, false))).div(this.q,true));
    
    //Olbliczamy nasze pierwiastki dla naszej wiadomosci 
-     r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
-     r2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
-     s1 =((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
-     s2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true);
+     r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
+     r2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
+     s1 =((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
+     s2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
+    
+     /*
+     System.out.println("PEIRWIASTKIIII " + r1.toString()+ "  p1 "+ (this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp)).toString()); 
+     System.out.println("PEIRWIASTKIIII " + r2.toString() + "  p2 " +(((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()) ; 
+     System.out.println("PEIRWIASTKIIII " + s1.toString()+ "  p3 "+ ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()); 
+     System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
+
+     */
      
-   
-      System.out.println("mp " + mp.toString()); 
-      System.out.println("mq " + mq.toString()); 
-      System.out.println("Wyniki Yp oraz Yq " + s11  + " " + s22 );
-      System.out.println("Znalezione pierwiastki to: " + r1.toString() + " " + 
-                 r2.toString() + " " + s1.toString() + " " + s2.toString()  + " " );
+     if (r1.substring(r1.length() - this.AddedWord.length(), r1.length() ).contains(this.AddedWord))
+        ResultOfDecode = ( r1.substring( 0, (r1.length()-this.AddedWord.length())).getBytes());
+     
+     else if (r2.substring(r2.length() - this.AddedWord.length() ,r2.length()).contains(this.AddedWord))
+        ResultOfDecode = ( r2.substring( 0, (r2.length()-this.AddedWord.length())).getBytes());
 
-       
-     //System.out.println("PEIRWIASTKIIII " + r1.toString()+ "  p1 "+ (this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp)).toString()); 
-    // System.out.println("PEIRWIASTKIIII " + r2.toString() + "  p2 " +(((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()) ; 
-     //System.out.println("PEIRWIASTKIIII " + s1.toString()+ "  p3 "+ ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()); 
-     //System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
+     else if (s1.substring(s1.length() - this.AddedWord.length(), s1.length()).contains(this.AddedWord))
+        ResultOfDecode = ( s1.substring( 0, (s1.length()-this.AddedWord.length())).getBytes());
 
-     if (r1.toString().substring(r1.toString().length() - this.AddedWord.length(), r1.toString().length() ).contains(this.AddedWord))
-         ResultOfDecode.append(r1.toString()).append(" ");
-     else if (r2.toString().substring(r2.toString().length() - this.AddedWord.length() ,r2.toString().length()).contains(this.AddedWord))
-         ResultOfDecode.append(r2.toString()).append(" ");
-     else if (s1.toString().substring(s1.toString().length() - this.AddedWord.length(), s1.toString().length()).contains(this.AddedWord))
-         ResultOfDecode.append(s1.toString()).append(" ");
-     else if(s2.toString().substring(s2.toString().length()- this.AddedWord.length(), s2.toString().length()).contains(this.AddedWord))
-         ResultOfDecode.append(s2.toString()).append(" ");
-     else
-       ;  //System.out.println("Nie znaleziono pierwiastka. Znalezione pierwiastki to: " + r1.toString() + " " + 
-           //      r2.toString() + " " + s1.toString() + " " + s2.toString() );
+     else if(s2.substring(s2.length()- this.AddedWord.length(), s2.length()).contains(this.AddedWord))
+        ResultOfDecode=( s2.substring( 0, (s2.length()-this.AddedWord.length())).getBytes());
+
+     else{
+       System.out.println("mp " + mp.toString()); 
+       System.out.println("mq " + mq.toString()); 
+       System.out.println("Wyniki Yp oraz Yq " + s11  + " " + s22 );
+       System.out.println("Znalezione pierwiastki to: " + r1 + " " + 
+                     r2+ " " + s1 + " " + s2 + " " );
+     }
+     
+     tableOfBytes[i] = (byte)Integer.parseInt(new String(ResultOfDecode)) ;
     }
-   this.decodedText = ResultOfDecode.toString();
+    this.decodedText = tableOfBytes;
  }
  
  private BigInt m=new BigInt("0");
- private BigInt mp=new BigInt("0");
+ private BigInt mpp=new BigInt("0");
  private BigInt r=new BigInt("0");
  private BigInt rp=new BigInt("1");
  private BigInt nwdw=new BigInt("0");
@@ -379,18 +378,18 @@ public class Model {
     }
     else
         extendedAlghoritmEuklidesa(b,a.div(b,true));
-    BigInt t=this.mp;
-    this.mp=(this.rp.sub((a.div(b,false)).mul( this.mp)));
+    BigInt t=this.mpp;
+    this.mpp=(this.rp.sub((a.div(b,false)).mul( this.mpp)));
     this.m=b;
     this.rp=t;
     this.r=a;
     this.yp = this.rp;
-    this.yq =  this.mp;
+    this.yq =  this.mpp;
  }
  
     private void resetValues(){
     this.m=new BigInt("0");
-    this.mp=new BigInt("0");
+    this.mpp=new BigInt("0");
     this.r=new BigInt("0");
     this.rp=new BigInt("1");
     this.nwdw=new BigInt("0");
@@ -457,7 +456,7 @@ public BigInt getleftPRange() {
         return this.q;
     }
 
-   public String getDecodedText(){
+   public byte[] getDecodedText(){
     return this.decodedText;
     }
 }

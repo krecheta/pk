@@ -50,8 +50,8 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e){
             model.decode(new String (model.getEncodedText()));
-            String decrypted = model.getDecodedText();
-            view.setPlainText2(decrypted);
+            byte[] decrypted = model.getDecodedText();
+            view.setPlainText2(new String(decrypted));
             }
     }
     class GenerateKey implements ActionListener{
