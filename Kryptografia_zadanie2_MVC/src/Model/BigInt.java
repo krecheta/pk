@@ -41,16 +41,15 @@ public class BigInt {
             if((this.sign && other.getSign()) || (!this.sign && !other.getSign()))
                  signValue = this.sign;
            
-            else if(this.sign && !other.getSign() ){ // +-
+            else if(this.sign && !other.getSign() ){ // +- 3+-5
              if (this.isBigger(other)){
-                 BigInt other2 = new BigInt(other.toString(),!other.getSign());
-                 
+                 BigInt other2 = new BigInt(other.toString(),!other.getSign());                 
                  return this.sub(other2);
              }
                
              else
                  result = new BigInt(other.toString(),!other.getSign());
-                 BigInt other2 = new BigInt(this.toString(),!this.getSign());
+                 BigInt other2 = new BigInt(this.toString(),this.getSign());
                  result = result.sub(other2);
                  result.setSign(other.getSign());
                  return result;

@@ -218,8 +218,9 @@ public class ModelTest {
         boolean flag = true; 
         
         for(int x=0; x<10000; x++){
-            for(int y=0; y<10000; y++){
-                if (!((Integer.toString(x*y)).equals(new BigInt(Integer.toString(x)).mul(new BigInt(Integer.toString(y))).toString()))){
+            for(int y=0; y<1000; y++){
+                System.err.println("Mnozenie " + x + " * " + y);
+                if (!((Integer.toString(x*y)).equals(new BigInt(Integer.toString(x)).KARACUBA(new BigInt(Integer.toString(y))).toString()))){
                     System.out.println("ModelTest.addtest() " + x + " * " + y);
                     flag =false;
                     assertEquals(true,flag);
@@ -227,7 +228,7 @@ public class ModelTest {
                     }
         }
               assertEquals(true,flag);
-    }
+    }/*
      @org.junit.Test
     public void multestBmulA(){
         boolean flag = true; 
@@ -409,12 +410,13 @@ public class ModelTest {
                             }
                     }
         }*/
-        BigInt wynik =new BigInt(Integer.toString(3799)).mul(new BigInt(Integer.toString(94)));
-          assertEquals("357106",wynik.toString());     
-              assertEquals(true,wynik.getSign());          
+        BigInt num1 = new BigInt("333");
+        BigInt num2 = new BigInt("33");
+          assertEquals("129110040087761027839616029934664535539337183380513",num1.pow(num2).toString());     
     }
     
 }
+
     
    
 

@@ -37,14 +37,15 @@ public class Model {
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
         this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
-               this.leftPRange = new BigInt("200");
+               this.leftPRange = new BigInt("10").pow(new BigInt(Integer.toString(this.AddedWord.length())));
 
     }
     
 //******************************************************************************
    private void fill_Q_KeyVariableRange(){
        this.leftQRange = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("1")));
-       this.leftQRange = new BigInt("100");
+       this.leftQRange = new BigInt("10").pow(new BigInt(Integer.toString(this.AddedWord.length())));
+               
    }
    
 //******************************************************************************
@@ -125,6 +126,7 @@ public class Model {
     
 //******************************************************************************
     public void choose_P_AND_Q(){
+        System.err.println("Choosing P and Q");
         BigInt one = new BigInt("1");
         BigInt two = new BigInt("2");
         BigInt three = new BigInt("3");
@@ -134,11 +136,13 @@ public class Model {
         while(!(!this.p.div(four,true).notequals(three) && testMileraRabina(this.p))){
            this.p=this.p.add(one); 
         }
+        System.out.println("P was choosen: " + this.p.toString());
        
         this.q = randomDigit(this.leftQRange, this.leftQRange.add(this.leftQRange.div(two, false)));
         while(!(!this.q.div(four,true).notequals(three) && testMileraRabina(this.q))){
           this.q=this.q.add(one);
         }
+        System.out.println("Q was choosen: " + this.q.toString());
      this.publickey = this.p.mul(this.q);
     }
     
@@ -355,7 +359,7 @@ public class Model {
        System.out.println("Znalezione pierwiastki to: " + r1 + " " + 
                      r2+ " " + s1 + " " + s2 + " " );
      }
-     
+        System.err.println("AAA " + new String(ResultOfDecode));
      tableOfBytes[i] = (byte)Integer.parseInt(new String(ResultOfDecode)) ;
     }
     this.decodedText = tableOfBytes;
