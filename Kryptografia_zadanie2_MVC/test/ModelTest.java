@@ -410,11 +410,11 @@ public class ModelTest {
                             }
                     }
         }*/
-        BigInt num1 = new BigInt("333");
-        BigInt num2 = new BigInt("33");
-          assertEquals("129110040087761027839616029934664535539337183380513",num1.pow(num2).toString());     
+        BigInt num1 = new BigInt("2",false);
+        BigInt num2 = new BigInt("3");
+          assertEquals("4",num1.pow(num2).toString());     
+         //  assertEquals(true,num1.pow(num2).getSign());  
     }
-    
 }
 
     

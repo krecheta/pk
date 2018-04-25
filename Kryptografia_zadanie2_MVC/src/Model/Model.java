@@ -37,14 +37,14 @@ public class Model {
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
         this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
-               this.leftPRange = new BigInt("10").pow(new BigInt(Integer.toString(this.AddedWord.length())));
+               this.leftPRange = new BigInt("100");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
 
     }
     
 //******************************************************************************
    private void fill_Q_KeyVariableRange(){
        this.leftQRange = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("1")));
-       this.leftQRange = new BigInt("10").pow(new BigInt(Integer.toString(this.AddedWord.length())));
+       this.leftQRange = new BigInt("100");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
                
    }
    
@@ -123,7 +123,7 @@ public class Model {
         }
      return flag;    
     }
-    
+
 //******************************************************************************
     public void choose_P_AND_Q(){
         System.err.println("Choosing P and Q");
@@ -257,15 +257,12 @@ public class Model {
     }
       
 //******************************************************************************
-      public void saveFileAsBinary(byte[] dataprivatekey, byte[] datapublickey,String privatekey, String publickey)throws IOException{
-        FileOutputStream output = new FileOutputStream(privatekey);
-        output.write(dataprivatekey);
+      public void saveFileAsBinary(byte[] data, String fileName)throws IOException{
+        FileOutputStream output = new FileOutputStream(fileName);
+        output.write(data);
         output.close();
-        
-        FileOutputStream output2 = new FileOutputStream(publickey);
-        output.write(datapublickey);
-        output.close();
-    }
+        System.out.println("Plik zapisano");  
+       }
     
 //******************************************************************************
       public void wypisz(byte[] text){
@@ -280,18 +277,22 @@ public class Model {
      BigInt two = new BigInt("2");
      StringBuilder partOfMessage;
      StringBuilder coded = new StringBuilder();
+                   wypisz(var);
+
      
      //ustawiamy rozmiar tablicy na nowa wartosc 
       byte [] result = new byte[1+this.AddedWordLength];
-      
       for(int i=0; i<var.length; i++){
+          
             partOfMessage = new StringBuilder();
-            partOfMessage.append(Integer.toString((int)var[i])); // bierzemy 1 bajt i go kodujemy 
+
+            partOfMessage.append(Integer.toString(var[i] & 0xff)); // bierzemy 1 bajt i go kodujemy 
             partOfMessage.append(this.AddedWord); //dodajemy do niego naszą dodatkową wiadomosc 
             message =new BigInt(partOfMessage.toString());
+
             coded.append(
                    (message.pow(two)).div(this.publickey,true).toString());
-           
+            System.out.println("Szyfrujemy "  + Integer.toString(var[i] & 0xff) + " wynik " + message.pow(two).div(this.publickey,true).toString());
             coded.append(" "); //kazdy blok oddzielamy spacja
         }
             this.encodedText = 
@@ -359,7 +360,7 @@ public class Model {
        System.out.println("Znalezione pierwiastki to: " + r1 + " " + 
                      r2+ " " + s1 + " " + s2 + " " );
      }
-        System.err.println("AAA " + new String(ResultOfDecode));
+        System.out.println("Wynik odszyfrowania " + (byte)Integer.parseInt(new String(ResultOfDecode)));
      tableOfBytes[i] = (byte)Integer.parseInt(new String(ResultOfDecode)) ;
     }
     this.decodedText = tableOfBytes;

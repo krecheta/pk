@@ -33,7 +33,75 @@ public class BigInt {
 	public String toString() {
 		return Arrays.toString(values).replaceAll("\\[|\\]|,|\\s", "");
 	}
-	
+        
+        //Mnozenie karatsuba
+	/*public BigInt mul(BigInt num2){
+        BigInt num1 = this;
+        BigInt high1, low1, high2, low2, X, Y, Z;
+        BigInt ten = new BigInt("10");
+        BigInt houndred = new BigInt("10");
+        BigInt eleven = new BigInt("11");
+        BigInt zero = new BigInt("0");
+        int m,n;
+       
+        boolean signValue = checkSignForMulAndDivOperation(num2);
+
+        if (num1.isSmmaler(zero) || num2.isSmmaler(zero)) {
+          return zero;
+        }
+        if (num1.isSmmaler(eleven) && num2.isSmmaler(eleven))
+            return new BigInt(Long.toString(Long.valueOf(num1.toString()) * Long.valueOf(num2.toString())));
+        
+        
+       // if (num1.isSmmaler(new BigInt(Long.toString(Long.MAX_VALUE))) && num2.isSmmaler(new BigInt(Long.toString(Long.MAX_VALUE)))){
+        //    return new BigInt(Long.toString(Long.valueOf(num1.toString()) * Long.valueOf(num2.toString())));
+        //}
+
+        if (num1.toString().length() % 2 == 1) {
+            num1 = new BigInt("0" + num1.toString());
+        }
+        
+         if (num2.toString().length() % 2 == 1) {
+            num2 = new BigInt("0" + num2.toString());
+        }
+         
+        if (num1.toString().length() > num2.toString().length()) {
+            m = num1.toString().length() - num2.toString().length();
+            for (int i=0; i<m; i++)
+            num2 = new BigInt( "0" + num2.toString());
+        } 
+        if (num2.toString().length() > num1.toString().length()) {
+            m = num2.toString().length() - num1.toString().length();
+            for (int i=0; i<m; i++)
+            num1 = new BigInt( "0" + num1.toString());
+        } 
+        
+        n = num1.toString().length() / 2;
+
+        high1 = new BigInt(num1.toString().substring(0,n));
+        low1 =  new BigInt(num1.toString().substring(n,num1.toString().length()));
+        high2 = new BigInt(num2.toString().substring(0, n));
+        low2 =  new BigInt(num2.toString().substring(n,num2.toString().length()));
+        
+        X = high1.mul(high2);
+        Y = low1.mul(low2);
+        Z = ((high1.add(low1)).mul((high2.add(low2)))).sub(X).sub(Y);
+        
+        for(int i=0; i<(n*2); i++)
+             X = new BigInt(X.toString()+"0");
+          for(int i=0; i<n; i++)
+             Z = new BigInt(Z.toString()+"0");
+        
+        BigInt result = new BigInt(X.add(Z.add(Y)).toString(), signValue);
+        boolean flag = true;
+        while(flag){
+            if (result.toString().substring(0, 1).equals("0") && result.toString().length() > 1)
+                result = new BigInt(result.toString().substring(1,result.toString().length()));
+            else
+                flag = false;
+        }
+      return result;
+     }*/
 	//dodawanie
 	public BigInt add(BigInt other) {
              boolean signValue;
@@ -305,8 +373,35 @@ public class BigInt {
         return new BigInt(quotient.toString(),sign);
 	}
 	
+        
+    
+        
+        public BigInt pow2(BigInt other){
+         BigInt zero= new BigInt("0");
+         BigInt one = new BigInt("1");
+         BigInt two = new BigInt("2");
+        boolean signValue = true;
+        
+        if (!(other.div(two,true).equals(zero)) &&(!this.sign))
+                    signValue = false;
+        
+        if (other.equals(zero))
+            return new BigInt("1",signValue);
+        
+        if (!other.div(two, true).equals(zero))
+            return new BigInt(this.mul(
+                    this.pow((other.sub(one)).div(two,false)))
+                                .toString(), signValue);
+        BigInt a = new BigInt(this.pow(other.div(two,false)).toString(), signValue);
+        return a.mul(a);
+   
+        }
+        
+        
+        
 	//potegowanie
 	public BigInt pow(BigInt other) {
+            System.err.println("Potwgowanie x^y " + this.toString() + " " + other.toString());
 		String val = this.toString();
 		String index = other.toString();
 		String result = "1";
@@ -318,7 +413,7 @@ public class BigInt {
 			index = sub(index, "1");
 		}
 		
-		return new BigInt(result,sign);
+		return new BigInt(result);
 	}
 	
 	//mno�enie dw�ch string�w (potrzebne do dzielenia dw�ch BigInt�w)
