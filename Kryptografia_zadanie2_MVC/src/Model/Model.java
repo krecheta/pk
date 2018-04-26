@@ -29,7 +29,7 @@ public class Model {
    
     public BigInt yp = new BigInt("0");
     public BigInt yq = new BigInt("0");
-    final private String AddedWord ="15" ;
+    final private String AddedWord ="159" ;
     final private int AddedWordLength = this.AddedWord.length();
 
 
@@ -37,14 +37,14 @@ public class Model {
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
         this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
-               this.leftPRange = new BigInt("100");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+               this.leftPRange = new BigInt("500");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
 
     }
     
 //******************************************************************************
    private void fill_Q_KeyVariableRange(){
        this.leftQRange = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("1")));
-       this.leftQRange = new BigInt("100");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+       this.leftQRange = new BigInt("300");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
                
    }
    
@@ -272,13 +272,14 @@ public class Model {
 
 //******************************************************************************
  public void encode(byte[] var) {
+     this.p = new BigInt("739");
+     this.q = new BigInt("431");
+     this.publickey = p.mul(q);
      BigInt message;
      String ReturnedString;
      BigInt two = new BigInt("2");
      StringBuilder partOfMessage;
-     StringBuilder coded = new StringBuilder();
-                   wypisz(var);
-
+     StringBuilder coded = new StringBuilder();    
      
      //ustawiamy rozmiar tablicy na nowa wartosc 
       byte [] result = new byte[1+this.AddedWordLength];
@@ -292,7 +293,7 @@ public class Model {
 
             coded.append(
                    (message.pow(two)).div(this.publickey,true).toString());
-            System.out.println("Szyfrujemy "  + Integer.toString(var[i] & 0xff) + " wynik " + message.pow(two).div(this.publickey,true).toString());
+           System.out.println("Szyfrujemy  " +i+" " + Integer.toString(var[i] & 0xff) + " wynik " + message.pow(two).div(this.publickey,true).toString());
             coded.append(" "); //kazdy blok oddzielamy spacja
         }
             this.encodedText = 
@@ -301,12 +302,12 @@ public class Model {
 
  public void decode(String codedText){
     BigInt coded, mp, mq;
+    //codedText = "900";
     String r1, r2, s1, s2;
     BigInt one = new BigInt("1");
     BigInt four = new BigInt("4");
     String[] splited = codedText.split("\\s+");
     byte[] ResultOfDecode  = "x".getBytes();
-    
     resetValues(); // zerujemy wartosci dla Rozszerzonego algorytmu euklidesaa
     extendedAlghoritmEuklidesa(this.p , this.q);
     String s11 = this.yp.toString();
@@ -320,47 +321,65 @@ public class Model {
     byte[] tableOfBytes = new byte [splited.length];
     
     for (int i =0; i<splited.length;i++){
+
       coded = new BigInt(splited[i]);
-      System.out.println("odszyfrujemy liczbe " + splited[i]); 
-     
     //Obliczamy mp oraz mq dla naszej zaszyfrowanje wiadomosci 
-     mp = ((coded.pow((this.p.add(one)).div(four, false))).div(this.p,true));
-     mq = ((coded.pow((this.q.add(one)).div(four, false))).div(this.q,true));
-   
+      mp = coded.power_modulo_fast(((this.p.add(one)).div(four, false)), this.p);
+      mq = coded.power_modulo_fast(((this.q.add(one)).div(four, false)), this.q);
+   // BigInt mp2 = ((coded.pow((this.p.add(one)).div(four, false))).div(this.p,true));
+    //BigInt mq2 = ((coded.pow((this.q.add(one)).div(four, false))).div(this.q,true));
+
    //Olbliczamy nasze pierwiastki dla naszej wiadomosci 
      r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
      r2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
      s1 =((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
      s2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
-    
-     /*
-     System.out.println("PEIRWIASTKIIII " + r1.toString()+ "  p1 "+ (this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp)).toString()); 
-     System.out.println("PEIRWIASTKIIII " + r2.toString() + "  p2 " +(((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()) ; 
-     System.out.println("PEIRWIASTKIIII " + s1.toString()+ "  p3 "+ ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).toString()); 
-     System.out.println("PEIRWIASTKIIII " + s2.toString() + " p4 "+ (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).toString()); 
 
-     */
+     if ( r1.length() >= this.AddedWordLength && r1.substring(r1.length() - this.AddedWord.length(), r1.length() ).contains(this.AddedWord)){
+         if (r1.length() == this.AddedWordLength)
+             ResultOfDecode = new byte[]{ (byte)(0) };
+         else
+             ResultOfDecode = ( r1.substring( 0, (r1.length()-this.AddedWord.length())).getBytes());
+     }
      
-     if (r1.substring(r1.length() - this.AddedWord.length(), r1.length() ).contains(this.AddedWord))
-        ResultOfDecode = ( r1.substring( 0, (r1.length()-this.AddedWord.length())).getBytes());
+     else if (r2.length() >= this.AddedWordLength && r2.substring(r2.length() - this.AddedWord.length() ,r2.length()).contains(this.AddedWord)){
+        if (r2.length() == this.AddedWordLength)
+            ResultOfDecode = new byte[]{ (byte)(0) };
+         else
+            ResultOfDecode = ( r2.substring( 0, (r2.length()-this.AddedWord.length())).getBytes());
+
+     }
      
-     else if (r2.substring(r2.length() - this.AddedWord.length() ,r2.length()).contains(this.AddedWord))
-        ResultOfDecode = ( r2.substring( 0, (r2.length()-this.AddedWord.length())).getBytes());
+     else if (s1.length() >= this.AddedWordLength && s1.substring(s1.length() - this.AddedWord.length(), s1.length()).contains(this.AddedWord)){
+           if (s1.length() == this.AddedWordLength)
+            ResultOfDecode = new byte[]{ (byte)(0) };
+         else
+            ResultOfDecode = ( s1.substring( 0, (s1.length()-this.AddedWord.length())).getBytes());
+     }
+                       
 
-     else if (s1.substring(s1.length() - this.AddedWord.length(), s1.length()).contains(this.AddedWord))
-        ResultOfDecode = ( s1.substring( 0, (s1.length()-this.AddedWord.length())).getBytes());
+     else if(s2.length() >= this.AddedWordLength &&s2.substring(s2.length()- this.AddedWord.length(), s2.length()).contains(this.AddedWord)){
+           if (s2.length() == this.AddedWordLength)
+            ResultOfDecode = new byte[]{ (byte)(0) };
+         else
+            ResultOfDecode=( s2.substring( 0, (s2.length()-this.AddedWord.length())).getBytes());
 
-     else if(s2.substring(s2.length()- this.AddedWord.length(), s2.length()).contains(this.AddedWord))
-        ResultOfDecode=( s2.substring( 0, (s2.length()-this.AddedWord.length())).getBytes());
-
+     }
      else{
        System.out.println("mp " + mp.toString()); 
        System.out.println("mq " + mq.toString()); 
        System.out.println("Wyniki Yp oraz Yq " + s11  + " " + s22 );
        System.out.println("Znalezione pierwiastki to: " + r1 + " " + 
                      r2+ " " + s1 + " " + s2 + " " );
+       break;
      }
-        System.out.println("Wynik odszyfrowania " + (byte)Integer.parseInt(new String(ResultOfDecode)));
+         wypisz(ResultOfDecode);
+                System.out.println("Znalezione pierwiastki to: " );
+
+         wypisz(new byte[]{ (byte)(0) });
+     if (ResultOfDecode[0] ==new byte[]{ (byte)(0) }[0]){
+         tableOfBytes[i] = (new byte[]{ (byte)(0) })[0];}
+     else
      tableOfBytes[i] = (byte)Integer.parseInt(new String(ResultOfDecode)) ;
     }
     this.decodedText = tableOfBytes;
@@ -400,6 +419,8 @@ public class Model {
     this.nwdw=new BigInt("0");
     this.zero = new BigInt("0");
     }
+    
+   
          
     
 

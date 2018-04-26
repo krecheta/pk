@@ -410,10 +410,15 @@ public class ModelTest {
                             }
                     }
         }*/
-        BigInt num1 = new BigInt("2",false);
-        BigInt num2 = new BigInt("3");
-          assertEquals("4",num1.pow(num2).toString());     
-         //  assertEquals(true,num1.pow(num2).getSign());  
+        BigInt num1 = new BigInt("81159");
+         BigInt num2 = new BigInt("185");
+          BigInt num3 = new BigInt("739");
+        byte[] xxx =  new byte[]{ (byte)(0) };
+        Model model = new Model(num1,3);
+   
+            //   System.err.println("Long.MAX_VALUE " + Long.toString( Integer.MAX_VALUE * Long.MAX_VALUE));
+          assertEquals("716",num1.power_modulo_fast(num2,num3).toString());     
+           //assertEquals(true,num1.pow(num2).getSign());  
     }
 }
 

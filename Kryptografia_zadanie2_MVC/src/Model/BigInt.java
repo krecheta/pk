@@ -35,7 +35,7 @@ public class BigInt {
 	}
         
         //Mnozenie karatsuba
-	/*public BigInt mul(BigInt num2){
+	public BigInt mul(BigInt num2){
         BigInt num1 = this;
         BigInt high1, low1, high2, low2, X, Y, Z;
         BigInt ten = new BigInt("10");
@@ -45,12 +45,12 @@ public class BigInt {
         int m,n;
        
         boolean signValue = checkSignForMulAndDivOperation(num2);
-
+                    
         if (num1.isSmmaler(zero) || num2.isSmmaler(zero)) {
-          return zero;
+          return new BigInt("0",signValue);
         }
-        if (num1.isSmmaler(eleven) && num2.isSmmaler(eleven))
-            return new BigInt(Long.toString(Long.valueOf(num1.toString()) * Long.valueOf(num2.toString())));
+        if (num1.isSmmaler(new BigInt("100000")) && num2.isSmmaler(new BigInt("100000")))
+            return new BigInt(Long.toString(Long.valueOf(num1.toString()) * Long.valueOf(num2.toString())), signValue);
         
         
        // if (num1.isSmmaler(new BigInt(Long.toString(Long.MAX_VALUE))) && num2.isSmmaler(new BigInt(Long.toString(Long.MAX_VALUE)))){
@@ -96,12 +96,13 @@ public class BigInt {
         boolean flag = true;
         while(flag){
             if (result.toString().substring(0, 1).equals("0") && result.toString().length() > 1)
-                result = new BigInt(result.toString().substring(1,result.toString().length()));
+                result = new BigInt(result.toString().substring(1,result.toString().length()),signValue);
             else
                 flag = false;
         }
+           
       return result;
-     }*/
+     }
 	//dodawanie
 	public BigInt add(BigInt other) {
              boolean signValue;
@@ -272,7 +273,7 @@ public class BigInt {
 	}
 	
 	//mno�enie
-	public BigInt mul(BigInt other) {
+	public BigInt mul2(BigInt other) {
                 boolean signValue = checkSignForMulAndDivOperation(other);
         	int[] val1 = values;
 		int[] val2 = other.getValues();
@@ -323,10 +324,12 @@ public class BigInt {
         	checkSignForMulAndDivOperation(other);
                 String val1 = this.toString();
 		String val2 = other.toString();
-                if(modulo)
+                
+         
+          
                 if (modulo && (!this.getSign()))
                     return moduloFromNegativeNumber(this, other);
-		
+	   
 		if(!isSmallerOrEqual(val1, val2)) {
 			if(modulo) {
 				return this;
@@ -373,34 +376,25 @@ public class BigInt {
         return new BigInt(quotient.toString(),sign);
 	}
 	
-        
-    
-        
-        public BigInt pow2(BigInt other){
-         BigInt zero= new BigInt("0");
+        //szybkie potegowanie znowu
+            public  BigInt pow(BigInt power) {
+                BigInt zero= new BigInt("0");
          BigInt one = new BigInt("1");
          BigInt two = new BigInt("2");
-        boolean signValue = true;
-        
-        if (!(other.div(two,true).equals(zero)) &&(!this.sign))
-                    signValue = false;
-        
-        if (other.equals(zero))
+          boolean signValue = true;
+         if (!(power.div(new BigInt("2"),true).equals(new BigInt("0"))) &&(!this.sign))
+                   signValue = false;
+        if (power.equals(zero))
             return new BigInt("1",signValue);
-        
-        if (!other.div(two, true).equals(zero))
-            return new BigInt(this.mul(
-                    this.pow((other.sub(one)).div(two,false)))
-                                .toString(), signValue);
-        BigInt a = new BigInt(this.pow(other.div(two,false)).toString(), signValue);
-        return a.mul(a);
-   
+        if (power.div(two,true).equals(one))
+            return new BigInt(this.pow(power.sub(one)).mul(this).toString(), signValue);
+        else {
+            BigInt a = this.pow(power.div(two,false));
+            return new BigInt(a.mul(a).toString(),signValue);
         }
-        
-        
-        
+    }
 	//potegowanie
-	public BigInt pow(BigInt other) {
+	/*public BigInt pow(BigInt other) {
             System.err.println("Potwgowanie x^y " + this.toString() + " " + other.toString());
 		String val = this.toString();
 		String index = other.toString();
@@ -414,8 +408,8 @@ public class BigInt {
 		}
 		
 		return new BigInt(result);
-	}
-	
+	}*/
+
 	//mno�enie dw�ch string�w (potrzebne do dzielenia dw�ch BigInt�w)
 	public String mul(String val1, String val2) {
 		if(val1.length() == 1 && Character.getNumericValue(val1.charAt(0)) == 0) {
@@ -622,5 +616,40 @@ public class BigInt {
             return false;
     }
 
-
+ public BigInt changeToBinary(BigInt X){
+      BigInt zero = new BigInt("0");
+      BigInt one  = new BigInt("1");
+      BigInt two  = new BigInt("2");
+      StringBuilder result = new StringBuilder();
+      
+      while(!X.equals(zero)){
+          if(X.div(two,true).equals(zero))
+              result.append("0");
+          else
+              result.append("1");
+          X = X.div(two,false);
+      }
+         
+      return new BigInt(result.reverse().toString());
+    }
+ 
+ public BigInt power_modulo_fast( BigInt b, BigInt m) {
+     
+    BigInt a = new BigInt(this.toString(),this.sign);
+    BigInt one = new BigInt("1");
+    BigInt result = new BigInt("1");
+    BigInt x = a.div(m,true);
+    String binaryString =  changeToBinary(b).toString();
+    BigInt binaryStringLength = m;//new BigInt(Integer.toString(binaryString.length()));
+    
+    for (int i=binaryString.length(); i>0; i--) {
+        x = x.div(m,true);   
+        if (binaryString.substring(i-1,i).equals("1")) {
+            result = result.mul(x);
+            result = result.div(m, true);
+        }
+    x = x.mul(x);
+    }
+  return result;
+  }  
 }
