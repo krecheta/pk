@@ -37,14 +37,14 @@ public class Model {
 //******************************************************************************
     private void fill_P_KeyVariableRange(){
         this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
-               this.leftPRange = new BigInt("500");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+               this.leftPRange = new BigInt("900");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
 
     }
     
 //******************************************************************************
    private void fill_Q_KeyVariableRange(){
        this.leftQRange = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("1")));
-       this.leftQRange = new BigInt("300");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+       this.leftQRange = new BigInt("700");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
                
    }
    
@@ -79,9 +79,9 @@ public class Model {
    }
    
 //******************************************************************************
-   public BigInt a_pow_d_mod_n(BigInt a, BigInt x){
-       return (a.pow(this.d)).div(x,true);
-   }
+  // public BigInt a_pow_d_mod_n(BigInt a, BigInt x){
+  //     return (a.pow(this.d)).div(x,true);
+ //  }
 
 //******************************************************************************
     public boolean testMileraRabina(BigInt p){
@@ -103,12 +103,12 @@ public class Model {
         boolean flag = true;
         for(int i=0; i<this.accuracyMilerTest; i++){
                 randomDigit =randomDigit(two,p.sub(two)) ;
-                x = a_pow_d_mod_n(randomDigit,p);
+                x = randomDigit.power_modulo_fast(this.d, p);
                 if( x.equals(one) || x.equals(p.sub(one)))
                     continue;
                 
             for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j=j.add(one)){
-                x = (x.pow(two)).div(p,true);
+                x = x.power_modulo_fast(two, p);
                 if (x.equals(one)){
                     flag = false;
                         break;
@@ -272,9 +272,7 @@ public class Model {
 
 //******************************************************************************
  public void encode(byte[] var) {
-     this.p = new BigInt("739");
-     this.q = new BigInt("431");
-     this.publickey = p.mul(q);
+  
      BigInt message;
      String ReturnedString;
      BigInt two = new BigInt("2");
@@ -291,9 +289,13 @@ public class Model {
             partOfMessage.append(this.AddedWord); //dodajemy do niego naszą dodatkową wiadomosc 
             message =new BigInt(partOfMessage.toString());
 
-            coded.append(
-                   (message.pow(two)).div(this.publickey,true).toString());
-           System.out.println("Szyfrujemy  " +i+" " + Integer.toString(var[i] & 0xff) + " wynik " + message.pow(two).div(this.publickey,true).toString());
+             coded.append(
+                   message.power_modulo_fast(two, this.publickey).toString());
+
+            
+            //coded.append(
+              //     (message.pow(two)).div(this.publickey,true).toString());
+           System.out.println("Szyfrujemy  " +i+" " + Integer.toString(var[i] & 0xff) + " wynik " +   message.power_modulo_fast(two, this.publickey).toString());
             coded.append(" "); //kazdy blok oddzielamy spacja
         }
             this.encodedText = 
