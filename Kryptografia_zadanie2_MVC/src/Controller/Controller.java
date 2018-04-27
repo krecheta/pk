@@ -68,14 +68,13 @@ public class Controller {
         public void actionPerformed (ActionEvent e){             
             selectFileView = new SelectFileView();
              // Dodac sprawdzanie klucza
-             
+             if (model.getP() != null){
             selectFileView.setPrivateKey("P: " + model.getP().toString() + "\n" + "Q: " + model.getQ().toString());
             selectFileView.setPublicKey(model.getPublicKey());
+            }               
             selectFileView.addChooseFile_1_Button(new ChooseReadFileListener());
             selectFileView.addChooseFile_2_Button(new ChooseSaveFileListener());
             selectFileView.addOkButton(new OkListenerfordecode(selectFileView));
-            selectFileView.addKeyRadio(new KeyRadioListener());
-            selectFileView.addKeyButton(new ChooseFileWithKey());
             selectFileView.addCancelButton(new CloseWindowListener(selectFileView));
             selectFileView.setVisible(true);
         }
@@ -86,14 +85,13 @@ public class Controller {
         public void actionPerformed (ActionEvent e){             
             selectFileView = new SelectFileView();
             // dodac wyswietlenie 
-            
-            selectFileView.setPrivateKey("P: " + model.getP().toString() + "\n" + "Q: " + model.getQ().toString());
-            selectFileView.setPublicKey(model.getPublicKey());
+            if (model.getP() != null ){
+                selectFileView.setPrivateKey("P: " + model.getP().toString() + "\n" + "Q: " + model.getQ().toString());
+                selectFileView.setPublicKey(model.getPublicKey());
+                }
             selectFileView.addChooseFile_1_Button(new ChooseReadFileListener());
             selectFileView.addChooseFile_2_Button(new ChooseSaveFileListener());
             selectFileView.addOkButton(new OkListenerForEncode(selectFileView));
-            selectFileView.addKeyRadio(new KeyRadioListener());
-            selectFileView.addKeyButton(new ChooseFileWithKey());
             selectFileView.addCancelButton(new CloseWindowListener(selectFileView));
             selectFileView.setVisible(true);
         }
@@ -111,29 +109,6 @@ public class Controller {
             }      
         }
     }
-    
-    class ChooseFileWithKey implements ActionListener{
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            FileChooser chooser = new FileChooser();
-            String respond  = chooser.React();
-            
-            switch(respond){
-                case "canceled": ; break;
-                default:selectFileView.setKeyPath(respond);
-            }      
-        }
-    }
-
-    class KeyRadioListener implements ActionListener{
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (selectFileView.getStateKeyRadio() == null)
-                selectFileView.setKeyTextEnabled();
-            else
-             selectFileView.setKeyTextDisabled();
-        }
-   }
 
     class ChooseSaveFileListener implements ActionListener{
         @Override
@@ -158,9 +133,8 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
               try{
-                model.readFileAsBinary(selectFileView.getReadFileText());
-               System.err.println("Wczytano dane " + model.getPlainText());
-               
+                  
+                model.readFileAsBinary(selectFileView.getReadFileText());               
                 model.encode(model.getPlainText()); // szyfruje nasz tekst 
                 byte[] encrypted = model.getEncodedText();
                 model.saveFileAsBinary(encrypted, selectFileView.getSaveFileText());
@@ -193,6 +167,7 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
               try{
+
                 model.readFileAsBinary(selectFileView.getReadFileText());
                 model.decode(new String (model.getPlainText()));
                 byte[] decrypted = model.getDecodedText();
@@ -217,11 +192,6 @@ public class Controller {
             }
         }
     }
-   
-    
-    
-    
-    
     
     class CloseWindowListener implements ActionListener{
        private final JFrame jframe;

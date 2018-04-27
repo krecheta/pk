@@ -12,120 +12,117 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 public class Model {
-    
+
     private BigInt HowManyBytes;// = new BigInt("2");  //dlugosc wiadomosci czyli jak wynosi 8 to bedzie tam mozna umiescic 8 bitow
     private BigInt HowManyBytesWithRepeatedBytes;// = new BigInt("4"); // dodatkowe bity
-    private int accuracyMilerTest ;//Dokladonsc testu MIlera  opisana wzorem 1-(1/4)^n  <-- n == accuracyMilerTest
-   
+    private int accuracyMilerTest;//Dokladonsc testu MIlera  opisana wzorem 1-(1/4)^n  <-- n == accuracyMilerTest
+
     public BigInt p;  //klucz 1 czesc
     public BigInt q;  //klucz 2 czesc
-    
-    private BigInt leftPRange;   
+
+    private BigInt leftPRange;
     private BigInt leftQRange;
     private BigInt d;
     private BigInt publickey;
-   
+
     public BigInt yp = new BigInt("0");
     public BigInt yq = new BigInt("0");
-    final private String AddedWord ="159" ;
+    final private String AddedWord = "159";
     final private int AddedWordLength = this.AddedWord.length();
 
-
-    
 //******************************************************************************
-    private void fill_P_KeyVariableRange(){
-        this.leftPRange  = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("2")));
-               this.leftPRange = new BigInt("900");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+    private void fill_P_KeyVariableRange() {
+        this.leftPRange = new BigInt("10").pow(new BigInt(Integer.toString(3 + this.AddedWordLength -2)));//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+    }
+
+//******************************************************************************
+    private void fill_Q_KeyVariableRange() {
+        this.leftQRange = new BigInt("10").pow(new BigInt(Integer.toString(2 + this.AddedWordLength -2)));//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
+    }
+
+//******************************************************************************
+    public boolean isEven(BigInt x) {
+        if (x.div(new BigInt("2"), true).toString().equals(new BigInt("0").toString())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+//******************************************************************************
+    public BigInt maxPowerOfTwo(BigInt x) {
+        BigInt result;
+        BigInt breakVariable = new BigInt("0");
+        BigInt two = new BigInt("2");
+        BigInt counter = new BigInt("1");
+        BigInt temp = new BigInt("1");
+
+        boolean flag = true;
+        while (flag) {
+            result = x.div(two.pow(counter), true);
+            //System.out.println("Model " + counter.toString() + " " +result.toString() );
+
+            if (result.toString().equals(breakVariable.toString())) {
+                counter = counter.add(temp);
+            } else {
+                flag = false;
+            }
+        }
+        return counter.sub(temp); // return s
 
     }
-    
-//******************************************************************************
-   private void fill_Q_KeyVariableRange(){
-       this.leftQRange = new BigInt("2").pow(this.HowManyBytesWithRepeatedBytes.mul(new BigInt("8")).add(new BigInt("1")));
-       this.leftQRange = new BigInt("700");//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
-               
-   }
-   
-//******************************************************************************
-   public boolean isEven(BigInt x) {
-       if (x.div(new BigInt("2"), true).toString().equals(new BigInt("0").toString()))
-           return true;
-       else
-           return false;
-   }
-   
-//******************************************************************************
-   public BigInt maxPowerOfTwo(BigInt x){
-       BigInt result;
-       BigInt breakVariable = new BigInt("0");
-       BigInt two = new BigInt("2");
-       BigInt counter = new BigInt("1");
-       BigInt temp = new BigInt("1");
-        
-       boolean flag = true;
-       while(flag){
-            result =x.div(two.pow(counter), true);
-                       //System.out.println("Model " + counter.toString() + " " +result.toString() );
-
-           if(result.toString().equals(breakVariable.toString()))
-             counter = counter.add(temp);
-           else
-                flag = false;
-       }
-       return counter.sub(temp); // return s
-       
-   }
-   
-//******************************************************************************
-  // public BigInt a_pow_d_mod_n(BigInt a, BigInt x){
-  //     return (a.pow(this.d)).div(x,true);
- //  }
 
 //******************************************************************************
-    public boolean testMileraRabina(BigInt p){
+    // public BigInt a_pow_d_mod_n(BigInt a, BigInt x){
+    //     return (a.pow(this.d)).div(x,true);
+    //  }
+//******************************************************************************
+    public boolean testMileraRabina(BigInt p) {
         BigInt temp = new BigInt("1");
         BigInt two = new BigInt("2");
         BigInt one = new BigInt("1");
         BigInt randomDigit;
         BigInt x;
-        
+
 // sprawdzamy czy liczba nie jest parzysta, jezeli jest nie jest ona liczbą pierwszą        
-        if (isEven(p))
+        if (isEven(p)) {
             return false;
+        }
 // Obliczamy Maksymalną potęgę 2 dzieląc x-1
         BigInt s = maxPowerOfTwo(p.sub(one));
 
 // Obliczamy wartosć d = 
         this.d = p.div(new BigInt("2").pow(s), false);
-        
+
         boolean flag = true;
-        for(int i=0; i<this.accuracyMilerTest; i++){
-                randomDigit =randomDigit(two,p.sub(two)) ;
-                x = randomDigit.power_modulo_fast(this.d, p);
-                if( x.equals(one) || x.equals(p.sub(one)))
-                    continue;
-                
-            for(BigInt j = new BigInt("1"); (j.isSmmaler(s))&& (x.notequals(p.sub(one))); j=j.add(one)){
+        for (int i = 0; i < this.accuracyMilerTest; i++) {
+            randomDigit = randomDigit(two, p.sub(two));
+            x = randomDigit.power_modulo_fast(this.d, p);
+            if (x.equals(one) || x.equals(p.sub(one))) {
+                continue;
+            }
+
+            for (BigInt j = new BigInt("1"); (j.isSmmaler(s)) && (x.notequals(p.sub(one))); j = j.add(one)) {
                 x = x.power_modulo_fast(two, p);
-                if (x.equals(one)){
-                    flag = false;
-                        break;
-                    }
-                }
-                if(!flag)
-                    break;
-                if(x.notequals(p.sub(one))){
+                if (x.equals(one)) {
                     flag = false;
                     break;
                 }
+            }
+            if (!flag) {
+                break;
+            }
+            if (x.notequals(p.sub(one))) {
+                flag = false;
+                break;
+            }
         }
-     return flag;    
+        return flag;
     }
 
 //******************************************************************************
-    public void choose_P_AND_Q(){
+    public void choose_P_AND_Q() {
         System.err.println("Choosing P and Q");
         BigInt one = new BigInt("1");
         BigInt two = new BigInt("2");
@@ -133,108 +130,104 @@ public class Model {
         BigInt four = new BigInt("4");
 
         this.p = randomDigit(this.leftPRange, this.leftPRange.add(this.leftPRange.div(two, false)));
-        while(!(!this.p.div(four,true).notequals(three) && testMileraRabina(this.p))){
-           this.p=this.p.add(one); 
+        while (!(!this.p.div(four, true).notequals(three) && testMileraRabina(this.p))) {
+            this.p = this.p.add(one);
         }
         System.out.println("P was choosen: " + this.p.toString());
-       
+
         this.q = randomDigit(this.leftQRange, this.leftQRange.add(this.leftQRange.div(two, false)));
-        while(!(!this.q.div(four,true).notequals(three) && testMileraRabina(this.q))){
-          this.q=this.q.add(one);
+        while (!(!this.q.div(four, true).notequals(three) && testMileraRabina(this.q)) && !this.p.equals(this.q)) {
+            this.q = this.q.add(one);
         }
         System.out.println("Q was choosen: " + this.q.toString());
-     this.publickey = this.p.mul(this.q);
+        this.publickey = this.p.mul(this.q);
     }
-    
-    
+
 //******************************************************************************
-    public BigInt randomDigit(BigInt left, BigInt right){
-     String valueLeftAsString = left.toString();
-     String valueRightAsString = right.toString();
-     int valueLeftLength = valueLeftAsString.length();
-     int valueRightLength = valueRightAsString.length();
-     StringBuilder value = new StringBuilder();
-     Random rand = new Random();
-     int digit;
-     String ndigit;
+    public BigInt randomDigit(BigInt left, BigInt right) {
+        String valueLeftAsString = left.toString();
+        String valueRightAsString = right.toString();
+        int valueLeftLength = valueLeftAsString.length();
+        int valueRightLength = valueRightAsString.length();
+        StringBuilder value = new StringBuilder();
+        Random rand = new Random();
+        int digit;
+        String ndigit;
 
-     int range = rand.nextInt(valueRightLength - valueLeftLength +1)+(valueLeftLength);
-     int[] result = new int[range];
+        int range = rand.nextInt(valueRightLength - valueLeftLength + 1) + (valueLeftLength);
+        int[] result = new int[range];
 
-     //Jezeli wylosowany zakres jest mniejszy of cyfry 
-     if(range < valueRightLength && range > valueLeftLength){
-        
-        for (int i=0; i<range; i++ ){
-            if(i==0){
-                result[i] = rand.nextInt(9)+1;
-            }
-            else
-                result[i] = rand.nextInt(10);
-        }
-     }
-     
-     else if(range < valueRightLength && range == valueLeftLength){
-         
-         for (int i=0; i<range; i++ ){
-             ndigit = valueLeftAsString.substring(i, i+1);
-             if(i==0)
-                 result[i]=rand.nextInt(10 - Integer.parseInt(ndigit))+Integer.parseInt(ndigit);
-             else
-                 result[i] = rand.nextInt(10);
-     
-            }
-     }
-   
-     else if(range == valueRightLength && range > valueLeftLength) {
-         boolean flag = false;
-         for (int i=0; i<range; i++ ){
-                  ndigit = valueRightAsString.substring(i, i+1);
-             if(i==0){
-                 result[i]=rand.nextInt(Integer.parseInt(ndigit))+1;
-             }
-             else{
-                  if (!flag){
-                    for(int z=0; z<i; z++){
-                        if (Integer.parseInt(valueRightAsString.substring(z, z+1)) > result[z] )
-                            flag=true;
-                       }
-                    }
-                    if(flag)
-                        result[i] =  result[i] = rand.nextInt(10);
-                    else
-                        result[i] = rand.nextInt(Integer.parseInt(ndigit)+1);
+        //Jezeli wylosowany zakres jest mniejszy of cyfry 
+        if (range < valueRightLength && range > valueLeftLength) {
+
+            for (int i = 0; i < range; i++) {
+                if (i == 0) {
+                    result[i] = rand.nextInt(9) + 1;
+                } else {
+                    result[i] = rand.nextInt(10);
                 }
             }
-        }
-     else
-          for(int z=0; z<range; z++){
-              int rndigit = Integer.parseInt(valueRightAsString.substring(z, z+1));
-              int lndigit =  Integer.parseInt(valueLeftAsString.substring(z, z+1));
-             //zamiana miejscami jezeli zakres prawostronny jest wiekszy niz lewo stronny 
-              if(rndigit < lndigit){
-                  rndigit+= lndigit;
-                  lndigit = rndigit - lndigit;
-                  rndigit -= lndigit;
-              }
-              result[z] = rand.nextInt(rndigit - lndigit +1 )+ lndigit;
-          
-          }
-     for (int t=0; t<range; t++)
-          value.append(result[t]);
-    return new BigInt(value.toString());
-  }
+        } else if (range < valueRightLength && range == valueLeftLength) {
 
+            for (int i = 0; i < range; i++) {
+                ndigit = valueLeftAsString.substring(i, i + 1);
+                if (i == 0) {
+                    result[i] = rand.nextInt(10 - Integer.parseInt(ndigit)+1) + Integer.parseInt(ndigit);
+                } else {
+                    result[i] = rand.nextInt(10);
+                }
+
+            }
+        } else if (range == valueRightLength && range > valueLeftLength) {
+            boolean flag = false;
+            for (int i = 0; i < range; i++) {
+                ndigit = valueRightAsString.substring(i, i + 1);
+                if (i == 0) {
+                    result[i] = rand.nextInt(Integer.parseInt(ndigit)) + 1;
+                } else {
+                    if (!flag) {
+                        for (int z = 0; z < i; z++) {
+                            if (Integer.parseInt(valueRightAsString.substring(z, z + 1)) > result[z]) {
+                                flag = true;
+                            }
+                        }
+                    }
+                    if (flag) {
+                        result[i] = result[i] = rand.nextInt(10);
+                    } else {
+                        result[i] = rand.nextInt(Integer.parseInt(ndigit) + 1);
+                    }
+                }
+            }
+        } else {
+            for (int z = 0; z < range; z++) {
+                int rndigit = Integer.parseInt(valueRightAsString.substring(z, z + 1));
+                int lndigit = Integer.parseInt(valueLeftAsString.substring(z, z + 1));
+                //zamiana miejscami jezeli zakres prawostronny jest wiekszy niz lewo stronny 
+                if (rndigit < lndigit) {
+                    rndigit += lndigit;
+                    lndigit = rndigit - lndigit;
+                    rndigit -= lndigit;
+                }
+                result[z] = rand.nextInt(rndigit - lndigit + 1) + lndigit;
+
+            }
+        }
+        for (int t = 0; t < range; t++) {
+            value.append(result[t]);
+        }
+        return new BigInt(value.toString());
+    }
 //******************************************************************************
 //**************************    
-   private byte[] plainText;
-   private byte[] encodedText;
-   private byte[] decodedText;
-   private byte[] key;
-   private byte[] plainText2;
-   
-   //Mnozymy razy 8 bo bedziemy szyfrowac po jednym bajcie minimalnie
-   
-      public Model(BigInt number_of_chars,int accuracyMilerTest){
+    private byte[] plainText;
+    private byte[] encodedText;
+    private byte[] decodedText;
+    private byte[] key;
+    private byte[] plainText2;
+
+    //Mnozymy razy 8 bo bedziemy szyfrowac po jednym bajcie minimalnie
+    public Model(BigInt number_of_chars, int accuracyMilerTest) {
         this.HowManyBytes = number_of_chars; // ile bajtow ma byc 
         this.HowManyBytesWithRepeatedBytes = this.HowManyBytes.mul(new BigInt("2")); // ma byc zawsze dwa razy wiecej bajtow;
         this.accuracyMilerTest = accuracyMilerTest;
@@ -243,224 +236,204 @@ public class Model {
 
     }
 //******************************************************************************
-    public void readFileAsBinary(String filepath) throws IOException{        
+
+    public void readFileAsBinary(String filepath) throws IOException {
         FileInputStream input = new FileInputStream(filepath);
         this.plainText = Files.readAllBytes(Paths.get(filepath));
         input.close();
     }
-    
+
+
 //******************************************************************************
-      public void readKeyAsBinary(String privatekey, String publickey) throws IOException{        
-        FileInputStream input = new FileInputStream(privatekey);
-        this.key = Files.readAllBytes(Paths.get(privatekey));
-        input.close();
-    }
-      
-//******************************************************************************
-      public void saveFileAsBinary(byte[] data, String fileName)throws IOException{
+    public void saveFileAsBinary(byte[] data, String fileName) throws IOException {
         FileOutputStream output = new FileOutputStream(fileName);
         output.write(data);
         output.close();
-        System.out.println("Plik zapisano");  
-       }
-    
-//******************************************************************************
-      public void wypisz(byte[] text){
-        for (int i=0; i< text.length; i++)
-            System.out.println( String.format("bajt nr%8s :%8s", i, Integer.toBinaryString(text[i] & 0xFF)).replace(' ', '0'));
+        System.out.println("Plik zapisano");
     }
 
 //******************************************************************************
- public void encode(byte[] var) {
-  
-     BigInt message;
-     String ReturnedString;
-     BigInt two = new BigInt("2");
-     StringBuilder partOfMessage;
-     StringBuilder coded = new StringBuilder();    
-     
-     //ustawiamy rozmiar tablicy na nowa wartosc 
-      byte [] result = new byte[1+this.AddedWordLength];
-      for(int i=0; i<var.length; i++){
-          
+    public void wypisz(byte[] text) {
+        for (int i = 0; i < text.length; i++) {
+            System.out.println(String.format("bajt nr%8s :%8s", i, Integer.toBinaryString(text[i] & 0xFF)).replace(' ', '0'));
+        }
+    }
+
+//******************************************************************************
+    public void encode(byte[] var) {
+
+        BigInt message;
+        String ReturnedString;
+        BigInt two = new BigInt("2");
+        StringBuilder partOfMessage;
+        StringBuilder coded = new StringBuilder();
+
+        //ustawiamy rozmiar tablicy na nowa wartosc 
+        byte[] result = new byte[1 + this.AddedWordLength];
+        for (int i = 0; i < var.length; i++) {
+
             partOfMessage = new StringBuilder();
 
             partOfMessage.append(Integer.toString(var[i] & 0xff)); // bierzemy 1 bajt i go kodujemy 
             partOfMessage.append(this.AddedWord); //dodajemy do niego naszą dodatkową wiadomosc 
-            message =new BigInt(partOfMessage.toString());
+            message = new BigInt(partOfMessage.toString());
 
-             coded.append(
-                   message.power_modulo_fast(two, this.publickey).toString());
+            coded.append(
+                    message.power_modulo_fast(two, this.publickey).toString());
 
-            
-            //coded.append(
-              //     (message.pow(two)).div(this.publickey,true).toString());
-           System.out.println("Szyfrujemy  " +i+" " + Integer.toString(var[i] & 0xff) + " wynik " +   message.power_modulo_fast(two, this.publickey).toString());
             coded.append(" "); //kazdy blok oddzielamy spacja
         }
-            this.encodedText = 
-                coded.toString().getBytes();
- }
-
- public void decode(String codedText){
-    BigInt coded, mp, mq;
-    //codedText = "900";
-    String r1, r2, s1, s2;
-    BigInt one = new BigInt("1");
-    BigInt four = new BigInt("4");
-    String[] splited = codedText.split("\\s+");
-    byte[] ResultOfDecode  = "x".getBytes();
-    resetValues(); // zerujemy wartosci dla Rozszerzonego algorytmu euklidesaa
-    extendedAlghoritmEuklidesa(this.p , this.q);
-    String s11 = this.yp.toString();
-    String s22 = this.yq.toString();
-     if (!this.yp.getSign())
-        s11 = "-"+s11;
-     if (!this.yq.getSign())
-        s22 = "-"+s22;
-    
-
-    byte[] tableOfBytes = new byte [splited.length];
-    
-    for (int i =0; i<splited.length;i++){
-
-      coded = new BigInt(splited[i]);
-    //Obliczamy mp oraz mq dla naszej zaszyfrowanje wiadomosci 
-      mp = coded.power_modulo_fast(((this.p.add(one)).div(four, false)), this.p);
-      mq = coded.power_modulo_fast(((this.q.add(one)).div(four, false)), this.q);
-   // BigInt mp2 = ((coded.pow((this.p.add(one)).div(four, false))).div(this.p,true));
-    //BigInt mq2 = ((coded.pow((this.q.add(one)).div(four, false))).div(this.q,true));
-
-   //Olbliczamy nasze pierwiastki dla naszej wiadomosci 
-     r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
-     r2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
-     s1 =((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
-     s2 = (((this.yp.mul(new BigInt("1",false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey,true).toString();
-
-     if ( r1.length() >= this.AddedWordLength && r1.substring(r1.length() - this.AddedWord.length(), r1.length() ).contains(this.AddedWord)){
-         if (r1.length() == this.AddedWordLength)
-             ResultOfDecode = new byte[]{ (byte)(0) };
-         else
-             ResultOfDecode = ( r1.substring( 0, (r1.length()-this.AddedWord.length())).getBytes());
-     }
-     
-     else if (r2.length() >= this.AddedWordLength && r2.substring(r2.length() - this.AddedWord.length() ,r2.length()).contains(this.AddedWord)){
-        if (r2.length() == this.AddedWordLength)
-            ResultOfDecode = new byte[]{ (byte)(0) };
-         else
-            ResultOfDecode = ( r2.substring( 0, (r2.length()-this.AddedWord.length())).getBytes());
-
-     }
-     
-     else if (s1.length() >= this.AddedWordLength && s1.substring(s1.length() - this.AddedWord.length(), s1.length()).contains(this.AddedWord)){
-           if (s1.length() == this.AddedWordLength)
-            ResultOfDecode = new byte[]{ (byte)(0) };
-         else
-            ResultOfDecode = ( s1.substring( 0, (s1.length()-this.AddedWord.length())).getBytes());
-     }
-                       
-
-     else if(s2.length() >= this.AddedWordLength &&s2.substring(s2.length()- this.AddedWord.length(), s2.length()).contains(this.AddedWord)){
-           if (s2.length() == this.AddedWordLength)
-            ResultOfDecode = new byte[]{ (byte)(0) };
-         else
-            ResultOfDecode=( s2.substring( 0, (s2.length()-this.AddedWord.length())).getBytes());
-
-     }
-     else{
-       System.out.println("mp " + mp.toString()); 
-       System.out.println("mq " + mq.toString()); 
-       System.out.println("Wyniki Yp oraz Yq " + s11  + " " + s22 );
-       System.out.println("Znalezione pierwiastki to: " + r1 + " " + 
-                     r2+ " " + s1 + " " + s2 + " " );
-       break;
-     }
-         wypisz(ResultOfDecode);
-                System.out.println("Znalezione pierwiastki to: " );
-
-         wypisz(new byte[]{ (byte)(0) });
-     if (ResultOfDecode[0] ==new byte[]{ (byte)(0) }[0]){
-         tableOfBytes[i] = (new byte[]{ (byte)(0) })[0];}
-     else
-     tableOfBytes[i] = (byte)Integer.parseInt(new String(ResultOfDecode)) ;
+        this.encodedText
+                = coded.toString().getBytes();
     }
-    this.decodedText = tableOfBytes;
- }
- 
- private BigInt m=new BigInt("0");
- private BigInt mpp=new BigInt("0");
- private BigInt r=new BigInt("0");
- private BigInt rp=new BigInt("1");
- private BigInt nwdw=new BigInt("0");
- private BigInt zero = new BigInt("0");
- private BigInt zero1 = new BigInt("10");
- 
- public void extendedAlghoritmEuklidesa(BigInt a, BigInt b){
 
-    if(b.equals(zero)){
-        this.nwdw=a;
-         this.r=a;
-        return;
-    }
-    else
-        extendedAlghoritmEuklidesa(b,a.div(b,true));
-    BigInt t=this.mpp;
-    this.mpp=(this.rp.sub((a.div(b,false)).mul( this.mpp)));
-    this.m=b;
-    this.rp=t;
-    this.r=a;
-    this.yp = this.rp;
-    this.yq =  this.mpp;
- }
- 
-    private void resetValues(){
-    this.m=new BigInt("0");
-    this.mpp=new BigInt("0");
-    this.r=new BigInt("0");
-    this.rp=new BigInt("1");
-    this.nwdw=new BigInt("0");
-    this.zero = new BigInt("0");
-    }
-    
+    public void decode(String codedText) {
+        BigInt coded, mp, mq;
+        //codedText = "900";
+        String r1, r2, s1, s2;
+        BigInt one = new BigInt("1");
+        BigInt four = new BigInt("4");
+        String[] splited = codedText.split("\\s+");
+        byte[] ResultOfDecode = "x".getBytes();
+        resetValues(); // zerujemy wartosci dla Rozszerzonego algorytmu euklidesaa
+        extendedAlghoritmEuklidesa(this.p, this.q);
+        String s11 = this.yp.toString();
+        String s22 = this.yq.toString();
+        if (!this.yp.getSign()) {
+            s11 = "-" + s11;
+        }
+        if (!this.yq.getSign()) {
+            s22 = "-" + s22;
+        }
+
+        byte[] tableOfBytes = new byte[splited.length];
+
+        for (int i = 0; i < splited.length; i++) {
+
+            coded = new BigInt(splited[i]);
+            //Obliczamy mp oraz mq dla naszej zaszyfrowanje wiadomosci 
+            mp = coded.power_modulo_fast(((this.p.add(one)).div(four, false)), this.p);
+            mq = coded.power_modulo_fast(((this.q.add(one)).div(four, false)), this.q);
    
-         
-    
+            //Olbliczamy nasze pierwiastki dla naszej wiadomosci 
+            r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+            r2 = (((this.yp.mul(new BigInt("1", false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+            s1 = ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+            s2 = (((this.yp.mul(new BigInt("1", false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+
+            if (r1.length() >= this.AddedWordLength && r1.substring(r1.length() - this.AddedWord.length(), r1.length()).contains(this.AddedWord)) {
+                if (r1.length() == this.AddedWordLength) {
+                    ResultOfDecode = new byte[]{(byte) (0)};
+                } else {
+                    ResultOfDecode = (r1.substring(0, (r1.length() - this.AddedWord.length())).getBytes());
+                }
+            } else if (r2.length() >= this.AddedWordLength && r2.substring(r2.length() - this.AddedWord.length(), r2.length()).contains(this.AddedWord)) {
+                if (r2.length() == this.AddedWordLength) {
+                    ResultOfDecode = new byte[]{(byte) (0)};
+                } else {
+                    ResultOfDecode = (r2.substring(0, (r2.length() - this.AddedWord.length())).getBytes());
+                }
+
+            } else if (s1.length() >= this.AddedWordLength && s1.substring(s1.length() - this.AddedWord.length(), s1.length()).contains(this.AddedWord)) {
+                if (s1.length() == this.AddedWordLength) {
+                    ResultOfDecode = new byte[]{(byte) (0)};
+                } else {
+                    ResultOfDecode = (s1.substring(0, (s1.length() - this.AddedWord.length())).getBytes());
+                }
+            } else if (s2.length() >= this.AddedWordLength && s2.substring(s2.length() - this.AddedWord.length(), s2.length()).contains(this.AddedWord)) {
+                if (s2.length() == this.AddedWordLength) {
+                    ResultOfDecode = new byte[]{(byte) (0)};
+                } else {
+                    ResultOfDecode = (s2.substring(0, (s2.length() - this.AddedWord.length())).getBytes());
+                }
+
+            } else {
+                System.out.println("mp " + mp.toString());
+                System.out.println("mq " + mq.toString());
+                System.out.println("Wyniki Yp oraz Yq " + s11 + " " + s22);
+                System.out.println("Znalezione pierwiastki to: " + r1 + " "
+                        + r2 + " " + s1 + " " + s2 + " ");
+                break;
+            }
+             System.err.println("Iteracja nr: " + i);
+             if (ResultOfDecode[0] == new byte[]{(byte) (0)}[0]) {
+                tableOfBytes[i] = (new byte[]{(byte) (0)})[0];
+            } else {
+                tableOfBytes[i] = (byte) Integer.parseInt(new String(ResultOfDecode));
+            }
+        }
+        this.decodedText = tableOfBytes;
+    }
+
+    private BigInt m = new BigInt("0");
+    private BigInt mpp = new BigInt("0");
+    private BigInt r = new BigInt("0");
+    private BigInt rp = new BigInt("1");
+    private BigInt nwdw = new BigInt("0");
+    private BigInt zero = new BigInt("0");
+    private BigInt zero1 = new BigInt("10");
+
+    public void extendedAlghoritmEuklidesa(BigInt a, BigInt b) {
+
+        if (b.equals(zero)) {
+            this.nwdw = a;
+            this.r = a;
+            return;
+        } else {
+            extendedAlghoritmEuklidesa(b, a.div(b, true));
+        }
+        BigInt t = this.mpp;
+        this.mpp = (this.rp.sub((a.div(b, false)).mul(this.mpp)));
+        this.m = b;
+        this.rp = t;
+        this.r = a;
+        this.yp = this.rp;
+        this.yq = this.mpp;
+    }
+
+    private void resetValues() {
+        this.m = new BigInt("0");
+        this.mpp = new BigInt("0");
+        this.r = new BigInt("0");
+        this.rp = new BigInt("1");
+        this.nwdw = new BigInt("0");
+        this.zero = new BigInt("0");
+    }
 
 //******************************************************************************
 //**************************** GETTERY *****************************************
 //******************************************************************************
-    
-    public byte[] getPlainText2(){
+    public byte[] getPlainText2() {
         return this.plainText2;
     }
-    
- //**************************  
-    public byte[] getKey(){
+
+    //**************************  
+    public byte[] getKey() {
         return this.key;
     }
-    
- //**************************   
-    public void setKey(byte[] key){
+
+    //**************************   
+    public void setKey(byte[] key) {
         this.key = key;
     }
-    
+
 //**************************  
-    public byte[] getPlainText(){
+    public byte[] getPlainText() {
         return this.plainText;
     }
-    
+
 //**************************
-    public byte[] getEncodedText(){
+    public byte[] getEncodedText() {
         return encodedText;
     }
-    
+
 //**************************
-public BigInt getleftPRange() {
+    public BigInt getleftPRange() {
         return this.leftPRange;
     }
 
 //**************************
-     public BigInt getleftQRange() {
+    public BigInt getleftQRange() {
         return this.leftQRange;
     }
 
@@ -468,24 +441,24 @@ public BigInt getleftPRange() {
     public BigInt getP() {
         return this.p;
     }
-    
+
 //**************************    
-    public String getPrivateKey(){
-        return new String("p: " + this.p.toString() + "\n" + "q: " + this.q.toString() );
+    public String getPrivateKey() {
+        return new String("p: " + this.p.toString() + "\n" + "q: " + this.q.toString());
     }
-    
+
 //**************************
-    public String getPublicKey(){
+    public String getPublicKey() {
         return this.publickey.toString();
     }
-    
+
 //**************************
     public BigInt getQ() {
         return this.q;
     }
 
-   public byte[] getDecodedText(){
-    return this.decodedText;
+    public byte[] getDecodedText() {
+        return this.decodedText;
     }
 }
 
