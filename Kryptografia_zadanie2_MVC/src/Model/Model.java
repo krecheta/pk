@@ -1,36 +1,26 @@
 package Model;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Model {
 
-    private BigInt HowManyBytes;// = new BigInt("2");  //dlugosc wiadomosci czyli jak wynosi 8 to bedzie tam mozna umiescic 8 bitow
-    private BigInt HowManyBytesWithRepeatedBytes;// = new BigInt("4"); // dodatkowe bity
-    private int accuracyMilerTest;//Dokladonsc testu MIlera  opisana wzorem 1-(1/4)^n  <-- n == accuracyMilerTest
-
-    public BigInt p;  //klucz 1 czesc
-    public BigInt q;  //klucz 2 czesc
-
-    private BigInt leftPRange;
-    private BigInt leftQRange;
-    private BigInt d;
-    private BigInt publickey;
-
-    public BigInt yp = new BigInt("0");
-    public BigInt yq = new BigInt("0");
+    final private BigInt HowManyBytes;
+    final private int accuracyMilerTest;
     final private String AddedWord = "159";
     final private int AddedWordLength = this.AddedWord.length();
+    private BigInt leftPRange, leftQRange, d, publickey;
+    private byte[] plainText,encodedText, decodedText, key, plainText2;
+   
 
+    public BigInt p,q;
+    public BigInt yp = new BigInt("0");
+    public BigInt yq = new BigInt("0");
+   
 //******************************************************************************
     private void fill_P_KeyVariableRange() {
         this.leftPRange = new BigInt("10").pow(new BigInt(Integer.toString(3 + this.AddedWordLength -2)));//.pow(new BigInt(Integer.toString(this.AddedWord.length())));
@@ -43,11 +33,7 @@ public class Model {
 
 //******************************************************************************
     public boolean isEven(BigInt x) {
-        if (x.div(new BigInt("2"), true).toString().equals(new BigInt("0").toString())) {
-            return true;
-        } else {
-            return false;
-        }
+        return x.div(new BigInt("2"), true).toString().equals(new BigInt("0").toString());
     }
 
 //******************************************************************************
@@ -61,8 +47,6 @@ public class Model {
         boolean flag = true;
         while (flag) {
             result = x.div(two.pow(counter), true);
-            //System.out.println("Model " + counter.toString() + " " +result.toString() );
-
             if (result.toString().equals(breakVariable.toString())) {
                 counter = counter.add(temp);
             } else {
@@ -70,13 +54,8 @@ public class Model {
             }
         }
         return counter.sub(temp); // return s
-
     }
 
-//******************************************************************************
-    // public BigInt a_pow_d_mod_n(BigInt a, BigInt x){
-    //     return (a.pow(this.d)).div(x,true);
-    //  }
 //******************************************************************************
     public boolean testMileraRabina(BigInt p) {
         BigInt temp = new BigInt("1");
@@ -218,25 +197,17 @@ public class Model {
         }
         return new BigInt(value.toString());
     }
-//******************************************************************************
-//**************************    
-    private byte[] plainText;
-    private byte[] encodedText;
-    private byte[] decodedText;
-    private byte[] key;
-    private byte[] plainText2;
-
-    //Mnozymy razy 8 bo bedziemy szyfrowac po jednym bajcie minimalnie
+    
+//******************************************************************************    
     public Model(BigInt number_of_chars, int accuracyMilerTest) {
         this.HowManyBytes = number_of_chars; // ile bajtow ma byc 
-        this.HowManyBytesWithRepeatedBytes = this.HowManyBytes.mul(new BigInt("2")); // ma byc zawsze dwa razy wiecej bajtow;
         this.accuracyMilerTest = accuracyMilerTest;
         this.fill_P_KeyVariableRange();
         this.fill_Q_KeyVariableRange();
 
     }
-//******************************************************************************
 
+//******************************************************************************
     public void readFileAsBinary(String filepath) throws IOException {
         FileInputStream input = new FileInputStream(filepath);
         this.plainText = Files.readAllBytes(Paths.get(filepath));
@@ -260,8 +231,8 @@ public class Model {
     }
 
 //******************************************************************************
+    //kodowanie naszej wiadomosci
     public void encode(byte[] var) {
-
         BigInt message;
         String ReturnedString;
         BigInt two = new BigInt("2");
@@ -271,30 +242,28 @@ public class Model {
         //ustawiamy rozmiar tablicy na nowa wartosc 
         byte[] result = new byte[1 + this.AddedWordLength];
         for (int i = 0; i < var.length; i++) {
-
             partOfMessage = new StringBuilder();
-
-            partOfMessage.append(Integer.toString(var[i] & 0xff)); // bierzemy 1 bajt i go kodujemy 
+            partOfMessage.append(Integer.toString(var[i] & 0xff)); // bierzemy 1 bajt i zamieniamy na lcizbę z zakresu od 0-255
             partOfMessage.append(this.AddedWord); //dodajemy do niego naszą dodatkową wiadomosc 
             message = new BigInt(partOfMessage.toString());
 
             coded.append(
-                    message.power_modulo_fast(two, this.publickey).toString());
+                    message.power_modulo_fast(two, this.publickey).toString()); // kodujemy naszą wiadomosc
 
             coded.append(" "); //kazdy blok oddzielamy spacja
         }
         this.encodedText
                 = coded.toString().getBytes();
     }
+        private byte[] ResultOfDecode = "x".getBytes();
 
+    //dekodowanie naszej wiadomosci 
     public void decode(String codedText) {
         BigInt coded, mp, mq;
-        //codedText = "900";
         String r1, r2, s1, s2;
         BigInt one = new BigInt("1");
         BigInt four = new BigInt("4");
-        String[] splited = codedText.split("\\s+");
-        byte[] ResultOfDecode = "x".getBytes();
+        String[] splited = codedText.split("\\s+"); // ucinamyz  naszego tekstu spacje 
         resetValues(); // zerujemy wartosci dla Rozszerzonego algorytmu euklidesaa
         extendedAlghoritmEuklidesa(this.p, this.q);
         String s11 = this.yp.toString();
@@ -309,6 +278,7 @@ public class Model {
         byte[] tableOfBytes = new byte[splited.length];
 
         for (int i = 0; i < splited.length; i++) {
+            System.out.println("iteration " + i);
 
             coded = new BigInt(splited[i]);
             //Obliczamy mp oraz mq dla naszej zaszyfrowanje wiadomosci 
@@ -316,55 +286,73 @@ public class Model {
             mq = coded.power_modulo_fast(((this.q.add(one)).div(four, false)), this.q);
    
             //Olbliczamy nasze pierwiastki dla naszej wiadomosci 
-            r1 = ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
-            r2 = (((this.yp.mul(new BigInt("1", false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
-            s1 = ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
-            s2 = (((this.yp.mul(new BigInt("1", false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
-
-            if (r1.length() >= this.AddedWordLength && r1.substring(r1.length() - this.AddedWord.length(), r1.length()).contains(this.AddedWord)) {
-                if (r1.length() == this.AddedWordLength) {
-                    ResultOfDecode = new byte[]{(byte) (0)};
-                } else {
-                    ResultOfDecode = (r1.substring(0, (r1.length() - this.AddedWord.length())).getBytes());
-                }
-            } else if (r2.length() >= this.AddedWordLength && r2.substring(r2.length() - this.AddedWord.length(), r2.length()).contains(this.AddedWord)) {
-                if (r2.length() == this.AddedWordLength) {
-                    ResultOfDecode = new byte[]{(byte) (0)};
-                } else {
-                    ResultOfDecode = (r2.substring(0, (r2.length() - this.AddedWord.length())).getBytes());
-                }
-
-            } else if (s1.length() >= this.AddedWordLength && s1.substring(s1.length() - this.AddedWord.length(), s1.length()).contains(this.AddedWord)) {
-                if (s1.length() == this.AddedWordLength) {
-                    ResultOfDecode = new byte[]{(byte) (0)};
-                } else {
-                    ResultOfDecode = (s1.substring(0, (s1.length() - this.AddedWord.length())).getBytes());
-                }
-            } else if (s2.length() >= this.AddedWordLength && s2.substring(s2.length() - this.AddedWord.length(), s2.length()).contains(this.AddedWord)) {
-                if (s2.length() == this.AddedWordLength) {
-                    ResultOfDecode = new byte[]{(byte) (0)};
-                } else {
-                    ResultOfDecode = (s2.substring(0, (s2.length() - this.AddedWord.length())).getBytes());
-                }
-
-            } else {
+           r1 = countR1(mp,mq);
+           if (checkIsResultIsCorrect(r1)){
+               appendToResultOfDecode(tableOfBytes, i);
+               continue;
+           }
+           r2 = countR2(mp,mq);
+           if (checkIsResultIsCorrect(r2)){
+               appendToResultOfDecode(tableOfBytes, i);
+               continue;
+           }
+            s1 = countS1(mp,mq);
+           if (checkIsResultIsCorrect(s1)){
+               appendToResultOfDecode(tableOfBytes, i);
+               continue;
+           }
+            s2 = countS2(mp,mq);
+           if (checkIsResultIsCorrect(s2)){
+               appendToResultOfDecode(tableOfBytes, i);
+               continue;
+           }
+               
                 System.out.println("mp " + mp.toString());
                 System.out.println("mq " + mq.toString());
                 System.out.println("Wyniki Yp oraz Yq " + s11 + " " + s22);
                 System.out.println("Znalezione pierwiastki to: " + r1 + " "
                         + r2 + " " + s1 + " " + s2 + " ");
                 break;
+        }
+     this.decodedText = tableOfBytes;
+    }
+    private String countR1(BigInt mp, BigInt mq){
+        return ((this.yp.mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+    }
+    
+    private String countR2(BigInt mp, BigInt mq){
+        return (((this.yp.mul(new BigInt("1", false))).mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+    }
+    
+    private String countS1(BigInt mp, BigInt mq){
+       return ((this.yp.mul(this.p).mul(mq)).sub(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+    }
+    
+    private String countS2(BigInt mp, BigInt mq){
+       return (((this.yp.mul(new BigInt("1", false))).mul(this.p).mul(mq)).add(this.yq.mul(this.q).mul(mp))).div(this.publickey, true).toString();
+    }
+    
+    //Sprawdza czy pierwiastek rozwiazania jest prawidlowy 
+    private boolean checkIsResultIsCorrect(String value){
+        if (value.length() >= this.AddedWordLength && value.substring(value.length() - this.AddedWord.length(), value.length()).contains(this.AddedWord)) {
+            if (value.length() == this.AddedWordLength) {
+                this.ResultOfDecode = new byte[]{(byte) (0)};
+                return true;
+            } 
+            else {
+                this.ResultOfDecode = (value.substring(0, (value.length() - this.AddedWord.length())).getBytes());
+                return true;
             }
-             System.err.println("Iteracja nr: " + i);
-             if (ResultOfDecode[0] == new byte[]{(byte) (0)}[0]) {
+        }
+     return false;
+    }
+    private void appendToResultOfDecode(byte[] tableOfBytes , int i){
+        if (ResultOfDecode[0] == new byte[]{(byte) (0)}[0]) {
                 tableOfBytes[i] = (new byte[]{(byte) (0)})[0];
             } else {
                 tableOfBytes[i] = (byte) Integer.parseInt(new String(ResultOfDecode));
             }
-        }
-        this.decodedText = tableOfBytes;
     }
-
     private BigInt m = new BigInt("0");
     private BigInt mpp = new BigInt("0");
     private BigInt r = new BigInt("0");
